@@ -62,17 +62,25 @@
         label-position="left"
         class="signup-content">
         <el-form-item label="手机号" class="signup-item" prop="phone">
-          <el-input v-model="formSignup.phone" class="signup-input"></el-input>
+          <el-input 
+            v-model="formSignup.phone" 
+            class="signup-input" 
+            autocomplete="new-password"></el-input>
         </el-form-item>
         <el-form-item label="密码" class="signup-item" prop="pwd">
           <el-input 
             v-model="formSignup.pwd"
             type="password"
+            autocomplete="new-password"
             class="signup-input">
           </el-input>
         </el-form-item>
         <el-form-item label="密码确认" class="signup-item" prop='pwd2'>
-          <el-input v-model="formSignup.pwd2" class="signup-input" type="password"></el-input>
+          <el-input 
+          v-model="formSignup.pwd2" 
+          class="signup-input"
+          autocomplete="new-password"
+          type="password"></el-input>
         </el-form-item>
         <el-form-item label="所在城市" class="signup-item" prop='city'>
           <!-- <el-input v-model="formSignup.city" class="signup-input"></el-input> -->
@@ -132,9 +140,9 @@
         isLogin: false,
         isSignUp: false,
         formSignup: {
-          phone: '15029380404',
-          pwd: '123456',
-          pwd2: '123456',
+          phone: '',
+          pwd: '',
+          pwd2: '',
           city: ''
         },
         signupRules: {
