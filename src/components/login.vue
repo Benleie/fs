@@ -8,30 +8,12 @@
         <li>支持项目标段创建</li>
         <li>支持全景自定义设置</li>
       </ul>
-      <button @click="showLogin" class="index-btn">马上开启</button>
+      <el-button @click="showLogin" class="index-btn">马上开启</el-button>
     </div>
 
     <div v-if="isLogin" class="main relative-box">
         <div class="index-title">登录</div>
         <div class="index-title2">用新视角看新世界</div>
-        <!-- <i-form>
-          <Form-item>
-            <i-input 
-              :value.sync="value" 
-              placeholder="请输入账号" 
-              style="width:350px">
-            </i-input>
-          </Form-item>
-          <Form-item>
-            <i-input type="password" 
-              placeholder="请输入密码"  style="width:350px">
-            </i-input>
-          </Form-item>
-          <div>忘记密码?</div>
-          <Form-item>
-            <i-button class="index-btn">登录</i-button>
-          </Form-item>
-        </i-form> -->
 
         <el-form>
           <el-form-item>
@@ -67,7 +49,6 @@
           <div @click="showSignUp" class="login-btn-right">注册</div>
         </div>
         <div class="close-x" @click="closeLogin">X</div>
-        <!-- <button class="close-button" @click="closeLogin">关闭</button> -->
     </div>
 
     <div v-if="isSignUp" class="main main-signup relative-box">
@@ -101,11 +82,10 @@
             class="signup-input"></el-cascader>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="saveAndLogin">保存并登录</el-button>
+          <el-button type="primary" class="signup-btn" @click="signUp">保存并登录</el-button>
         </el-form-item>
       </el-form>
       <div class="close-x" @click="closeSignUp">X</div>
-      <!-- <button class="close-button" @click="closeSignUp">关闭</button> -->
     </div>
 
     
@@ -206,7 +186,7 @@
         })
         console.log(loginData)
       },
-      saveAndLogin(){
+      signUp(){
         this.$refs["signup"].validate(async (valid)=> {
           if(!valid){
             return false;
@@ -277,7 +257,6 @@ body::-webkit-scrollbar{
   /* overflow: Scroll; */
   /* overflow-y: hidden; */
 }
-
 .wrapper::-webkit-scrollbar {
   display: none;
 }
@@ -323,7 +302,7 @@ body::-webkit-scrollbar{
 
 .index-title {
   /* width: 320px; */
-  height:90px;
+  height: 90px;
   font-size: 64px;
   margin-top: 26px;
   letter-spacing: 10px;
@@ -349,7 +328,7 @@ body::-webkit-scrollbar{
   text-align: left;
 }
 .index-btn {
-  margin-top: 50px;
+  margin-top: 135px;
   width: 172px;
   height: 58px;
   background: linear-gradient(180deg, #67C2FF 0%, #3BB0FE 100%);
@@ -417,12 +396,25 @@ body::-webkit-scrollbar{
   height: 738px;
 }
 .signup-btn {
+  /* 105 - 32 */
+  margin-top: 73px;
+  width: 350px;
+  height: 58px;
+  background: linear-gradient(180deg, #67C2FF 0%, #3BB0FE 100%);
+  border-radius: 46px;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 33px;
   margin-bottom: 30px;
 }
 .signup-title {
-  width: 150px;
+  /* width: 150px; */
   height: 90px;
-  font-size: 50px;
+  font-size: 64px;
+  line-height: 90px;
+  font-weight: 600;
+  letter-spacing: 20px;
   margin-top: 46px;
   margin-bottom: 35px;
 }
@@ -432,22 +424,33 @@ body::-webkit-scrollbar{
   width: 450px;
 }
 
-.signup-input {
-  width:350px;
-}
-
-
 </style>
-<style >
+
+
+<style>
 /* .signup-btn .ivu-input {
   display: inline;
 } */
-
-.signup-item label {
-  color: #ffffff;
-  /* text-align: left; */
+.signup-item {
+  margin-bottom: 32px;
 }
-
+.signup-item label {
+  height: 58px;
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 58px;
+}
+.signup-input input {
+  width: 350px;
+  height: 58px;
+  background: rgba(29, 58, 89, 0.6);
+  border-radius: 46px;
+  border: 1px solid #FFFFFF;
+  font-size: 20px;
+  font-family: PingFangSC-Medium;
+  font-weight: 500;
+  color: #ffffff;  
+}
 .login-input input {
   width: 350px;
   height: 58px;
@@ -460,6 +463,7 @@ body::-webkit-scrollbar{
   color: #ffffff;  
   /* line-height: 50px; */
 }
+/* CSS优先级问题 */
 .login-input .el-input__inner{
   padding-left: 60px;
 }

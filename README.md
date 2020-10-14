@@ -1,24 +1,11 @@
-# 3d-panos
+# 全景产品化项目
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## commit(日志信息)规范
+日志信息以`<type>`开头，用于说明commit的类别，type只使用下面7个标识。
++ feat：新功能（feature）
++ fix：修补bug
++ docs：文档（documentation）
++ style： 格式（不影响代码运行的变动）
++ refactor：重构（即不是新增功能，也不是修改bug的代码变动）
++ test：增加测试
++ chore：构建过程或辅助工具的变动
