@@ -36,7 +36,7 @@
           </el-form-item>
           <div class="forgotPwd">忘记密码?</div>
           <el-form-item>
-            <el-button class="login-btn">登录</el-button>
+            <el-button class="login-btn" @click="Login">登录</el-button>
           </el-form-item>
         </el-form>
 
@@ -108,6 +108,7 @@
 <script>
   //import x from ''
   import CityList from "../config/city.js"
+  import Qs from "qs"
   export default {
     components: {},
     data() {
@@ -168,6 +169,27 @@
       }
     },
     methods: {
+      async Login(){
+        let url = "/oauth/token"
+        let myParams = {
+          client_id: "client",
+          client_secret: 123456,
+          scope: "read write",
+          grant_type: "password",
+          // username: this.loginUser,
+          username: "tj01",
+          password: this.loginPwd
+        }
+        
+        let loginData = await this.$http.post(url, {}, {
+          params: myParams,
+          paramsSerializer: function(params) {
+            return Qs.stringify(params)
+          },
+        })
+        // let loginData = await this.$http.post(url, Qs.stringify(myParams)) //Formdata
+        console.log(loginData)
+      },
       async wxLogin(){
         let wxData = await this.$http.get("http://192.168.1.6:8080/wx/qr")
         // console.log(wxData)
