@@ -67,7 +67,6 @@
   height: 1080px;
   background: #F8F8F8;
   border: 1px solid #979797;
-  
 }
 .header {
   display: flex;
