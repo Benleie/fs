@@ -25,5 +25,12 @@ export default {
 body, html {
   margin: 0;
 }
+body::-webkit-scrollbar {
+  display: none;
+}
+/* body {
+  overflow-y: overlay;
+} */
+
 
 </style>

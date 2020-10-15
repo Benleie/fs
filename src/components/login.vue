@@ -61,25 +61,32 @@
         label-width="100px"
         label-position="left"
         class="signup-content">
+        <el-form-item style="display:none;">
+          <el-input autocomplete="new-password"></el-input>
+        </el-form-item>
+        <el-form-item style="display:none;">
+          <el-input></el-input>
+        </el-form-item>
+
         <el-form-item label="手机号" class="signup-item" prop="phone">
           <el-input 
-            v-model="formSignup.phone" 
-            class="signup-input" 
-            autocomplete="new-password"></el-input>
+            v-model="formSignup.phone"
+            autocomplete="new-password" 
+            class="signup-input"></el-input>
         </el-form-item>
         <el-form-item label="密码" class="signup-item" prop="pwd">
           <el-input 
             v-model="formSignup.pwd"
-            type="password"
             autocomplete="new-password"
+            type="password"
             class="signup-input">
           </el-input>
         </el-form-item>
-        <el-form-item label="密码确认" class="signup-item" prop='pwd2'>
+        <el-form-item label="密码确认" class="signup-item" prop="pwd2">
           <el-input 
-          v-model="formSignup.pwd2" 
+          v-model="formSignup.pwd2"
+          autocomplete="new-password" 
           class="signup-input"
-          autocomplete="new-password"
           type="password"></el-input>
         </el-form-item>
         <el-form-item label="所在城市" class="signup-item" prop='city'>
@@ -95,21 +102,6 @@
       </el-form>
       <div class="close-x" @click="closeSignUp">X</div>
     </div>
-
-    
-    <Modal v-model="isModalLogin" :visible.sync="isModalLogin">
-      <div class="login-box">
-        <h1>登录</h1>
-        <p>全景看世界，欢迎您回来</p>
-        <i-input :value.sync="value" placeholder="手机号/邮箱">
-          <i-select :model.sync="select1" slot="prepend" style="width: 80px">
-            <i-option value="http">中国大陆</i-option>
-            <i-option value="https">香港</i-option>
-          </i-select>
-        </i-input>
-        <i-input type="password"></i-input>
-      </div>
-    </Modal>
   </div>
 </template>
 
@@ -131,8 +123,6 @@
       }
 
       return {
-        isModalLogin: false,
-        value: '',
         loginUser: '',
         loginPwd: '',
         select1: "http",
@@ -273,9 +263,6 @@
 </script>
 
 <style scoped>
-body::-webkit-scrollbar{
-    display: none;
-}
 .wrapper {
   width: 1920px;
   height: 1080px;
@@ -286,9 +273,6 @@ body::-webkit-scrollbar{
   justify-content: center;
   /* overflow: Scroll; */
   /* overflow-y: hidden; */
-}
-.wrapper::-webkit-scrollbar {
-  display: none;
 }
 
 .main {
