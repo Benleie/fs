@@ -1,20 +1,193 @@
 <template>
-  <div class=''>
-    <h1>素材库</h1>
+  <div class='tabs-wrapper'>
+    <el-tabs v-model="activeName" @tab-click="handleClick" class="tabs-content">
+      <el-tab-pane label="图片素材" name="first">用户管理</el-tab-pane>
+      <el-tab-pane label="视频素材" name="second">
+        <div>
+          <el-input placeholder="请输入关键字" class="image-search">
+            <i slot="prefix" class="el-input__icon el-icon-search"></i>
+          </el-input>
+          <el-button>上传图片</el-button>
+          <el-button>移动到</el-button>
+          <el-button>新建文件夹</el-button>
+        </div>
+        <div class="select-box">
+          <!-- <el-radio v-model="isSelected" label="1">全选</el-radio> -->
+          <div class="select-left">
+            <div class="toggle" @click="toggleSelectAll">
+                <div class="toggle-content" v-if="isToggleAll"></div>
+            </div>
+            <div>全选</div>
+          </div>
+          
+          <div class="dropdown-container">
+            <div  class="dropdown-content">
+              <!-- <el-dropdown>
+                <div>筛选： 
+                  <span>全部</span>
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </div>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>一周内</el-dropdown-item>
+                  <el-dropdown-item>一月内</el-dropdown-item>
+                  <el-dropdown-item>一周内</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown> -->
+              <el-dropdown trigger="click">
+                <div class="dropdown-title">筛选： 
+                  <span>{{ filterDefault }}</span>
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </div>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item 
+                    @click.native="changeFilter(0)">{{ filterList[0] }}
+                  </el-dropdown-item>
+                  <el-dropdown-item 
+                    @click.native="changeFilter(1)">{{ filterList[1] }}
+                  </el-dropdown-item>
+                  <el-dropdown-item 
+                    @click.native="changeFilter(2)">{{ filterList[2] }}
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="changeFilter(3)">{{ filterList[3] }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+            <div class="dropdown-content">
+              <el-dropdown trigger="click">
+                <div>排序： 
+                  <span>{{ sortDefault }}</span>
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </div>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item 
+                    @click.native="changeSort(0)">{{ sortList[0] }}
+                  </el-dropdown-item>
+                  <el-dropdown-item 
+                    @click.native="changeSort(1)">{{ sortList[1] }}
+                  </el-dropdown-item>
+                  <el-dropdown-item 
+                    @click.native="changeSort(2)">{{ sortList[2] }}
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="changeSort(3)">{{ sortList[3] }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </div>
+        </div>
+        <div>
+          <Item
+            :itemList="itemData"
+            v-for="itemData in itemLists"
+            :key="itemData.id"
+          />
+        </div>
+        
+      </el-tab-pane>
+      <el-tab-pane label="音乐素材" name="third">角色管理</el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script>
   //import x from ''
+  import Item from './small/Item.vue'
   export default {
-    components: {},
+    components: { Item },
     data() {
-      return {};
+      return {
+        activeName: 'second',
+        isToggleAll: true,
+        filterList: ["最近一周", "最近一月", "最近一周"],
+        filterDefault: "全部",
+        sortList: ["最近修改", "文件大小", "名称A-Z", "创建时间"],
+        sortDefault: "最近修改",
+        itemLists: [
+          {
+            id: 1,
+            url: "../../../favicon.ico",
+            name: "姚明在世界杯",
+            createTime: "2020-10-16"
+          },
+          {
+            id: 2,
+            url: "../../../favicon.ico",
+            name: "姚明在世界杯",
+            createTime: "2020-10-16"
+          },
+          {
+            id: 3,
+            url: "../../../favicon.ico",
+            name: "姚明在世界杯",
+            createTime: "2020-10-16"
+          },
+        ],
+
+      };
     },
-    methods: {},
+    methods: {
+      handleClick(tab, event) {
+        console.log(tab, event);
+      },
+      changeSort(id){
+        // console.log(e.currentTarget)
+        this.sortDefault = this.sortList[id]
+      },
+      changeFilter(id){ this.filterDefault = this.filterList[id] },
+      toggleSelectAll() { this.isToggleAll = !this.isToggleAll }
+    },
   }
 </script>
 
 <style scoped>
+.tabs-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.tabs-content {
+  width: 1060px;
+}
+.dropdown-content {
+  margin-left: 27px;
+  margin-right: 20px;
+}
+.image-search {
+  width: 300px;
+  margin-right: 100px;
+}
+
+.select-box {
+  width: 1059px;
+  height: 60px;
+  background-color: #EDEDED;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.select-left,
+.dropdown-container {
+  display: flex;
+}
+.dropdown-title {
+} 
+.toggle {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  border: 1px solid #979797;
+}
+.toggle-content {
+  width: 10px;
+  height: 10px;
+  background-color: #3BB0FE;
+}
 
 </style>

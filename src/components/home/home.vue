@@ -1,6 +1,6 @@
 <template>
   <div class=''>
-    <h1>主页</h1>
+    <h1>home</h1>
   </div>
 </template>
 
@@ -15,6 +15,7 @@
   }
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
+//@import url()
 
 </style>

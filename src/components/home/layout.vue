@@ -4,9 +4,21 @@
       <div class="header-text1">全景时光机</div>
       <div class="header-text2">个人主页</div>
       <div class="header-btn">
-        <el-button>上传全景</el-button>
+        <el-button class="upload-btn">上传全景</el-button>
       </div>
-      <div class="header-icon">临建项目部</div>
+      <div class="header-info">
+        <el-dropdown trigger="click">
+          <div class="info-title">
+            <img src="@/assets/weixin2.png" alt="" class="info-icon">
+            <div>临建项目部<i class="el-icon-arrow-down el-icon--right"></i></div>
+          </div>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>个人设置</el-dropdown-item>
+            <el-dropdown-item>退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        
+      </div>
     </div>
     <div class="main-wrapper">
       <div class="main">
@@ -54,7 +66,9 @@
   export default {
     components: {},
     data() {
-      return {};
+      return {
+        iconUrl: "@/assets/logo.png",
+      };
     },
     methods: {},
   }
@@ -74,6 +88,7 @@
   height: 80px;
   background: #4A4A4A;
   /* justify-content: center; */
+  align-items: center;
   font-size: 36px;
   color: #ffffff;
 }
@@ -82,12 +97,42 @@
 }
 .header-text2 {
   margin-left: 446px;
+  height: 33px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 33px;
 }
 .header-btn {
   margin-left: 100px;
 }
-.header-icon {
+.header-info {
   margin-left: 100px;
+}
+.upload-btn {
+  width: 126px;
+  height: 50px;
+  background: #3BB0FE;
+  border-radius: 4px;
+  border: none;
+  color: #FFFFFF;
+  font-size: 24px;
+  padding: 8px 15px;
+  font-weight: 600;
+  line-height: 33px;
+}
+.info-title {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 33px;
+}
+.info-icon {
+  width: 44px;
+  border-radius: 22px;
+  border: 1px solid green;
+  margin-right: 12px;
 }
 .main-wrapper {
   width: 100%;
@@ -113,4 +158,7 @@
   background-color: #ffffff;
   margin-left: 10px;
 }
+</style>
+<style>
+
 </style>

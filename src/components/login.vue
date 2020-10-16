@@ -61,13 +61,9 @@
         label-width="100px"
         label-position="left"
         class="signup-content">
-        <el-form-item style="display:none;">
-          <el-input autocomplete="new-password"></el-input>
-        </el-form-item>
-        <el-form-item style="display:none;">
-          <el-input></el-input>
-        </el-form-item>
-
+        <el-form-item style="display:none;"></el-form-item>
+        <el-form-item style="display:none;"></el-form-item>
+        
         <el-form-item label="手机号" class="signup-item" prop="phone">
           <el-input 
             v-model="formSignup.phone"
@@ -90,7 +86,6 @@
           type="password"></el-input>
         </el-form-item>
         <el-form-item label="所在城市" class="signup-item" prop='city'>
-          <!-- <el-input v-model="formSignup.city" class="signup-input"></el-input> -->
           <el-cascader 
             v-model="formSignup.city" 
             :options="cities" 
