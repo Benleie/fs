@@ -43,6 +43,7 @@
 .toggle {
   width: 20px;
   height: 20px;
+  margin-left: 19px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,6 +56,8 @@
   background-color: #3BB0FE;
 }
 .item-box {
+  width: 100%;
+  height: 100px;
   display: flex;
   justify-content: space-between;
   /* border-bottom: 1px solid #F4F4F4; */

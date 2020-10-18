@@ -24,11 +24,15 @@
       <div class="main">
         <div class="sider">
           <div class="sider-box">
-            <div>临建项目部</div>
-            <div>空间容量: 0/30GB</div>
+            <div class="image">
+              <img src="@/assets/weixin2.png" alt="" height="83px">
+            </div>
+            <div class="text1">临建项目部</div>
+            <div class="text2">空间容量: 0/30GB</div>
+            <div class="btn">扩容</div>
           </div>
-          <div class="menu">
-            <el-menu :router="true">
+          <div class="sider-menu">
+            <el-menu :router="true" :collapse="false">
               <el-menu-item index="/home/home">
                 <i class="el-icon-menu"></i>
                 <span slot="title">主页</span>
@@ -131,7 +135,7 @@
 .info-icon {
   width: 44px;
   border-radius: 22px;
-  border: 1px solid green;
+  /* border: 1px solid green; */
   margin-right: 12px;
 }
 .main-wrapper {
@@ -150,7 +154,6 @@
   width: 200px;
   height: 420px;
   background-color: #ffffff;
-  font-size: 40px;
 }
 .content-area {
   width: 1110px;
@@ -158,7 +161,53 @@
   background-color: #ffffff;
   margin-left: 10px;
 }
-</style>
-<style>
+.sider-box{
+  text-align: center;
+}
+/* bug: 5px */
+.sider-box .image {
+  /* font-size: 0; */
+  /* line-height: 0; */
+}
+.sider-box  .image img{
+  /* display: block; */
+  vertical-align: top;
+  width: 83px;
+  border-radius: 42px;
+  margin-top: 24px;
+  border: 1px solid salmon;
+}
+.sider-box .text1 {
+  margin-top: 8px;
+  height: 33px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333333;
+  line-height: 33px;
+}
+.sider-box .text2 {
+  margin-top: 4px;
+  height: 25px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #9B9B9B;
+  line-height: 25px;
+  /* border: 1px solid red; */
+}
+.sider-box .btn {
+  /* margin-bottom: 21px; */
+  height: 22px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #3BB0FE;
+  line-height: 22px;
+  cursor: pointer;
+}
 
+</style>
+
+<style>
+.sider-menu .el-menu-item {
+  border-top: 1px solid #F8F8F8;
+}
 </style>
