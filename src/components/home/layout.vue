@@ -14,7 +14,7 @@
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>个人设置</el-dropdown-item>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item @click.native="logOut">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         
@@ -74,7 +74,24 @@
         iconUrl: "@/assets/logo.png",
       };
     },
-    methods: {},
+    methods: {
+      async logOut(){
+        let logoutData = await this.$http.post(
+          "/api/logout",
+          {},
+          {
+            headers: {
+              Authorization: localStorage.getItem("loginToken") 
+            }
+          }
+        )
+        if(logoutData.data.code === "200"){
+          localStorage.removeItem("loginToken")
+          this.$router.push({ path: "/welcome" })
+        }
+        
+      },
+    },
   }
 </script>
 
@@ -163,6 +180,7 @@
 }
 .sider-box{
   text-align: center;
+  padding-bottom: 21px;
 }
 /* bug: 5px */
 .sider-box .image {
@@ -171,7 +189,7 @@
 }
 .sider-box  .image img{
   /* display: block; */
-  vertical-align: top;
+  vertical-align: bottom;
   width: 83px;
   border-radius: 42px;
   margin-top: 24px;

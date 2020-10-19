@@ -1,17 +1,6 @@
 <template>
   <div class='wrapper'>
-    <div v-if="isIndex" class="main">
-      <div class="index-title">全景时光机</div>
-      <div class="index-title2">用新视角看新世界</div>
-      <hr class="index-hr">
-      <ul class="index-ul">
-        <li>支持项目标段创建</li>
-        <li>支持全景自定义设置</li>
-      </ul>
-      <el-button @click="showLogin" class="index-btn">马上开启</el-button>
-    </div>
-
-    <div v-if="isLogin" class="main relative-box">
+    <div class="main relative-box">
         <div class="index-title">登录</div>
         <div class="index-title2">用新视角看新世界</div>
 
@@ -50,107 +39,18 @@
         </div>
         <div class="close-x" @click="closeLogin">X</div>
     </div>
-
-    <div v-if="isSignUp" class="main main-signup relative-box">
-      <div class="signup-title">注册</div>
-      <el-form 
-        :model="formSignup"
-        ref="signup"
-        :rules="signupRules"
-        :hide-required-asterisk="true"
-        label-width="100px"
-        label-position="left"
-        class="signup-content">
-        <el-form-item style="display:none;"></el-form-item>
-        <el-form-item style="display:none;"></el-form-item>
-        
-        <el-form-item label="手机号" class="signup-item" prop="phone">
-          <el-input 
-            v-model="formSignup.phone"
-            autocomplete="new-password" 
-            class="signup-input"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" class="signup-item" prop="pwd">
-          <el-input 
-            v-model="formSignup.pwd"
-            autocomplete="new-password"
-            type="password"
-            class="signup-input">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="密码确认" class="signup-item" prop="pwd2">
-          <el-input 
-          v-model="formSignup.pwd2"
-          autocomplete="new-password" 
-          class="signup-input"
-          type="password"></el-input>
-        </el-form-item>
-        <el-form-item label="所在城市" class="signup-item" prop='city'>
-          <el-cascader 
-            v-model="formSignup.city" 
-            :options="cities" 
-            class="signup-input"></el-cascader>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" class="signup-btn" @click="signUp">保存并登录</el-button>
-        </el-form-item>
-      </el-form>
-      <div class="close-x" @click="closeSignUp">X</div>
-    </div>
   </div>
 </template>
 
 <script>
   //import x from ''
-  import CityList from "../config/city.js"
   import Qs from "qs"
   export default {
     components: {},
     data() {
-      let checkPwd = (source, options, callback) => {
-        if(options === ''){
-          callback(new Error('请再次输入密码'))
-        } else if(options !== this.formSignup.pwd) {
-          callback(new Error("两次输入的密码不一致！"))
-        } else {
-          callback()
-        }
-      }
-
       return {
         loginUser: '',
         loginPwd: '',
-        select1: "http",
-        isIndex: true,
-        isLogin: false,
-        isSignUp: false,
-        formSignup: {
-          phone: '',
-          pwd: '',
-          pwd2: '',
-          city: ''
-        },
-        signupRules: {
-          phone: [
-            { required: true, message: "请输入手机号", trigger: 'blur' },
-            { 
-              pattern: /^(((13|18)[0-9]{9})|(14[05679][0-9]{8})|(15[012356789][0-9]{8})|(16[2567][0-9]{8})|(17[01235678][0-9]{8})|(19[189][0-9]{8}))$/,
-              message: "请输入正确的手机号",
-              trigger: "blur"
-            }
-          ],
-          pwd: [
-            { required: true, message: "请输入密码", trigger: 'blur' },
-            { min: 6, message: "请输入六位及六位以上的密码", trigger: 'blur' }
-          ],
-          pwd2: [{ validator: checkPwd, trigger: 'blur' }],
-          city: [{ required: true, message: "请选择您所在的城市", trigger: 'blur' }]
-        },
-        cities: CityList
-        /* getCity: {
-          lazy: true,
-          lazyLoad(node, resolve){}
-        } */
       };
     },
     created(){
@@ -169,8 +69,8 @@
           client_secret: 123456,
           scope: "read write",
           grant_type: "password",
-          // username: this.loginUser,
-          username: "tj01",
+          username: this.loginUser,
+          // username: "tj01",
           password: this.loginPwd
         }
         
@@ -180,13 +80,18 @@
             return Qs.stringify(params)
           },
         })
+        let Data = loginData.data
+        if(Data.code === "200") {
+          localStorage.setItem("loginToken", "bearer " + Data.data.access_token)
+          this.$router.push({ path: "/home" })
+        }
         // let loginData = await this.$http.post(url, Qs.stringify(myParams)) //Formdata
         console.log(loginData)
       },
       async wxLogin(){
-        let wxData = await this.$http.get("http://192.168.1.6:8080/wx/qr")
-        // console.log(wxData)
-        if(!wxData.data.code !== "200") console.log("something wrong, can't get wx data")
+        let wxData = await this.$http.get("http://122.51.133.191:8989/wx/qr")
+        console.log(wxData)
+        if(wxData.data.code !== "200") console.log("something wrong, can't get wx data")
         else {
           window.location.href = wxData.data.data
         }
@@ -195,64 +100,19 @@
         // ?code=xxxx&&state=xxxx
         let wxCode = queryStr.match(/code=(\S*?)&&/)[1]
           , wxState = queryStr.substring(queryStr.lastIndexOf('state=') + 'state='.length)
-        let loginData = await this.$http.post("http://192.168.1.6:8080/oauth/login", {
+        let loginData = await this.$http.post("/oauth/login", {
           code: wxCode,
           state: wxState
         })
         console.log(loginData)
       },
-      signUp(){
-        this.$refs["signup"].validate(async (valid)=> {
-          if(!valid){
-            return false;
-          } else {
-            let signupRes = await this.$http.post(
-              "http://192.168.1.22:8080/api/auth/registe", 
-              {
-                cellphone: this.formSignup.phone,
-                password: this.formSignup.pwd,
-                province: 22
-              },
-              {
-                headers: { 
-                  "Authorization": "bearer " + "b8f90f11-4b03-4517-b870-9a931bef4559"
-                }
-              }
-            )
-            if(signupRes.data.code === "200"){
-              console.log(signupRes.data.code)
-              this.toLogin()
-            } else {
-              console.log("signup failed!")
-              console.log(signupRes.data)
-            }
-          }
-        });
-      },
-      async getProvice(){
-        // let provice = await this.$http()
-
-      },
-      showLogin(){ 
-        this.isIndex = false
-        this.isLogin = true
-      },
       closeLogin(){
-        this.isLogin = false
-        this.isIndex = true
+        this.$router.push({ path: "/welcome" })
       },
       showSignUp(){
-        this.isLogin = false
-        this.isSignUp = true
+        this.$router.push({ path: "/signup" })
       },
-      closeSignUp(){
-        this.isSignUp = false
-        this.isIndex = true
-      },
-      toLogin(){
-        this.isSignUp = false
-        this.isLogin = true
-      }
+      
     },
   }
 </script>
@@ -437,29 +297,6 @@
 
 
 <style>
-/* .signup-btn .ivu-input {
-  display: inline;
-} */
-.signup-item {
-  margin-bottom: 32px;
-}
-.signup-item label {
-  height: 58px;
-  color: #ffffff;
-  font-size: 20px;
-  line-height: 58px;
-}
-.signup-input input {
-  width: 350px;
-  height: 58px;
-  background: rgba(29, 58, 89, 0.6);
-  border-radius: 46px;
-  border: 1px solid #FFFFFF;
-  font-size: 20px;
-  font-family: PingFangSC-Medium;
-  font-weight: 500;
-  color: #ffffff;  
-}
 .login-input input {
   width: 350px;
   height: 58px;

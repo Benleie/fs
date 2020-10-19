@@ -4,10 +4,13 @@
       <div class="toggle" @click="toggle">
         <div class="toggle-content" v-if="isToggle"></div>
       </div>
-      <div class="item-image"><img :src="itemList.url" alt=""></div>
+      <div class="item-image">
+        <img v-if="itemList.isFolder" :src="fileIcon" alt="">
+        <img v-else :src="itemList.url || myUrl">
+      </div>
       <div class="item-info">
-        <div>{{ itemList.name }} </div>
-        <div>{{ itemList.createTime }} </div>
+        <div class="title" @click="enterFolder">{{ itemList.name }} </div>
+        <div>{{ itemList.createTime || myTime  }} </div>
       </div>
     </div>
 
@@ -31,10 +34,49 @@
     data() {
       return {
         isToggle: false,
+        myUrl:  "../../../../favicon.ico",
+        fileIcon: "../../../../folder.png",
+        myTime: "2020-10-16"
       };
     },
     methods: {
       toggle(){ this.isToggle = !this.isToggle; },
+      enterFolder(){
+        if(this.itemList.isFolder)
+          this.$emit("refresh", this.itemList.id)
+      }
+      /* async enterFolder() {
+        let listData = await this.$http.get(
+          "/api/getResourceList",
+          {
+            headers: {
+              Authorization: localStorage.getItem("loginToken") 
+            },
+            params: {
+              orderColumn: 0,
+              pid: this.itemList.id,
+              type: 1
+            },
+            paramsSerializer: function(params) {
+              return Qs.stringify(params)
+            }
+          }
+        )
+        if(listData.data.code === "200") {
+          let lists = []
+          listData.data.data.forEach(item => {
+            let obj = {
+              id: item.id,
+              isFolder: item.isFolder == 1,
+              name: item.name,
+              fileType: item.type,
+              createTime: item.createTime,
+            }
+            lists.push(obj)
+          })
+          this.resourceList = lists
+          console.log(this.resourceList)
+      } */
     },
   }
 </script>
@@ -63,6 +105,9 @@
   /* border-bottom: 1px solid #F4F4F4; */
   border-bottom: 1px solid #EDEDED; 
 }
+.item-box:hover {
+  background-color: #f3f3f3;
+}
 .item-left,
 .item-right {
   display: flex;
@@ -73,6 +118,16 @@
 }
 .item-image img {
   height: 48px;
+}
+.item-info {
+  margin-left: 10px;
+}
+/* inline style todo */
+.item-info .title {
+  /* border: 1px solid red; */
+  line-height: 50px;
+  font-size: 30px;
+  cursor: pointer;
 }
 .item-btn {
   font-size: 16px;

@@ -7,7 +7,9 @@ const constantRoutes = [
   {
     path: "/login", name: "login", component: () => import("./components/login.vue"),
   },
-  { path: "/", redirect: "login" },
+  { path: "/", redirect: "/welcome" },
+  { path: "/welcome", component: () => import('./components/welcome/welcome.vue') },
+  { path: "/signup", component: () => import('./components/welcome/signup.vue') },
   { path: "/home", component: Layout, redirect: "/home/home", children: [
     { path:"/home/home", component:() => import('./components/home/home.vue') },
     { path: "/home/manager", component:() => import('./components/home/manager.vue') },
@@ -23,4 +25,35 @@ const createRouter = () => new VueRouter({
   mode: "history"
 })
 const router = createRouter()
+router.beforeEach((to, from, next) => {
+    console.log(from.fullPath);
+    // console.log(to.fullPath);
+    next();
+
+    let isNotHome = false
+        || to.name == "login" 
+        || to.path === "/welcome"
+        || to.path === "/signup"
+    // token exists？
+    if(localStorage.getItem('loginToken')){
+        console.log("from where: " + from.name)
+        
+        if(isNotHome){
+            // console.log("already log in!")
+            // console.log("from where: " + from.name)
+            next({ path: "/home" } );
+        } else {
+            next();
+        }
+    } else {
+        if(isNotHome)
+            next()
+        else {
+            console.log("Please log in")
+            next({
+                name:'login'
+            })
+        }
+    }
+});
 export default router
