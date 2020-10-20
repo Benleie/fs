@@ -1,6 +1,10 @@
 <template>
   <div class='wrapper'>
     <div class="main relative-box">
+        <div class="fixed-box">
+          <div>测试账号： 15071290003</div>
+          <div>密码： 123456</div>
+        </div>
         <div class="index-title">登录</div>
         <div class="index-title2">用新视角看新世界</div>
 
@@ -129,7 +133,12 @@
   /* overflow: Scroll; */
   /* overflow-y: hidden; */
 }
-
+.fixed-box {
+  position: absolute;
+  top: -100px;
+  font-size: 20px;
+  color: black;
+}
 .main {
   width: 600px;
   height: 620px;

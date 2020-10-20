@@ -96,7 +96,7 @@
       </span>
     </el-dialog>
     <el-dialog
-      title="图片上传"
+      title="上传"
       :visible.sync="dialogUpload"
       width="65%"
       >
@@ -122,6 +122,7 @@
               v-model="uploadInfo.name"
               class="name-input"></el-input>
           </el-form-item>
+          <div>大小为</div>
         </el-form>
       </div>
       
@@ -148,8 +149,8 @@
     watch: {
       typeName: {
         handler(newValue){
-          this.typeIndex = ["image", "video", "music"].indexOf(newValue)
-          this.typeCHName = ["图片", "视频", "音乐"][this.typeIndex]
+          this.typeIndex = ["image", "music", "video"].indexOf(newValue)
+          this.typeCHName = ["图片", "音乐", "视频"][this.typeIndex]
           this.typeId = this.typeIndex + 1
           this.getList(this.parentId)
         }
@@ -158,8 +159,8 @@
     data() {
       return {
         typeIndex: null,
-        typeId: null,
-        typeCHName: "",
+        typeId: 1,
+        typeCHName: "图片",
         isToggleAll: true,
         filterList: ["最近一周", "最近一月", "最近一周"],
         filterDefault: "全部",
@@ -205,10 +206,10 @@
       };
     },
     created(){
-      
+      this.getList(this.parentId)
     },
     updated(){
-      console.log(this.resourceList)
+      // console.log(this.resourceList)
     },
     methods: {
       changeSort(id){
@@ -240,15 +241,15 @@
             let obj = {
               id: item.id,
               isFolder: item.isFolder == 1,
+              fileType: item.type,
               name: item.name,
               url: item.url,
-              fileType: item.type,
               createTime: item.createTime,
             }
             lists.push(obj)
           })
           this.resourceList = lists
-          console.log(this.resourceList)
+          // console.log(this.resourceList)
         }
       },
       enterFolder(id){
@@ -302,7 +303,7 @@
           url: this.uploadInfo.url,
           parentId: this.parentId,
           isFolder: 0,
-          type: 1,
+          type: this.typeId,
         }
         let uploadData = await this.$http.post(
           "/api/addResource",

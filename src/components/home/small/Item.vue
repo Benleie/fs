@@ -5,8 +5,10 @@
         <div class="toggle-content" v-if="isToggle"></div>
       </div>
       <div class="item-image">
-        <img v-if="itemList.isFolder" :src="fileIcon" alt="">
-        <img v-else :src="itemList.url || myUrl">
+        <img v-if="itemList.isFolder" :src="folderIcon">
+        <img v-else-if="itemList.fileType == 2" :src="musicIcon">
+        <img v-else-if="itemList.fileType == 3" :src="videoIcon">
+        <img v-else :src="itemList.url || imageIcon">
       </div>
       <div class="item-info">
         <div class="title" @click="enterFolder">{{ itemList.name }} </div>
@@ -34,8 +36,10 @@
     data() {
       return {
         isToggle: false,
-        myUrl:  "../../../../favicon.ico",
-        fileIcon: "../../../../folder.png",
+        folderIcon: "../../../../folder.png",
+        videoIcon: "../../.././video.png",
+        musicIcon: "../../../../music.png",
+        imageIcon:  "../../../../image.png",
         myTime: "2020-10-16"
       };
     },

@@ -4,6 +4,9 @@
       <el-tab-pane label="图片素材" name="image">
         <tab-content :typeName="activeName"></tab-content>
       </el-tab-pane>
+      <el-tab-pane label="音乐素材" name="music">
+        <tab-content :typeName="activeName"></tab-content>
+      </el-tab-pane>
       <el-tab-pane label="视频素材" name="video">
         <tab-content :typeName="activeName"></tab-content>
         <!-- <div class="first-box">
@@ -89,65 +92,13 @@
             @refresh="enterFolder"
           />
         </div> -->
-
-        
       </el-tab-pane>
-      <el-tab-pane label="音乐素材" name="music">
-        <tab-content :typeName="activeName"></tab-content>
-      </el-tab-pane>
-    </el-tabs>
-
-    <el-dialog
-      title="新建文件夹"
-      :visible.sync="dialogVisible"
-      width="30%">
-      <el-input v-model="dialogInput" placeholder="请输入"></el-input>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="newFolder">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      title="图片上传"
-      :visible.sync="dialogUpload"
-      width="65%"
-      >
-      <div class="upload-wrapper">
-        <el-upload
-          class="upload-box"
-          action="/api/upload/simpleUpload?module=resource"
-          :headers="headers"
-          :on-success="handleSuccess"
-          :limit="3"
-          >
-          <el-button size="small" type="primary">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-        </el-upload>
-        <el-form
-          :model="uploadInfo"
-          ref="uploadForm"
-          :rules="uploadRule"
-          :hide-required-asterisk="true"
-          label-width="100px">
-          <el-form-item label="名称" prop="name">
-            <el-input
-              v-model="uploadInfo.name"
-              class="name-input"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
       
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogUpload = false">取 消</el-button>
-        <el-button type="primary" @click="clickEnsure">确 定</el-button>
-      </span>
-    </el-dialog>
+    </el-tabs>
   </div>
 </template>
 
 <script>
-  //import x from ''
-  import Qs from 'qs'
   import tabContent from "./small/tabContent.vue"
   export default {
     components: { 
@@ -155,170 +106,13 @@
     },
     data() {
       return {
-        activeName: "video",
+        activeName: "image",
         typeArr: ["image", "video", "music"],
-        isToggleAll: true,
-        filterList: ["最近一周", "最近一月", "最近一周"],
-        filterDefault: "全部",
-        sortList: ["最近修改", "文件大小", "名称A-Z", "创建时间"],
-        sortDefault: "最近修改",
-        itemLists: [
-          {
-            id: 1,
-            url: "../../../favicon.ico",
-            name: "姚明在世界杯",
-            createTime: "2020-10-16"
-          },
-          {
-            id: 2,
-            url: "../../../favicon.ico",
-            name: "姚明在世界杯",
-            createTime: "2020-10-16"
-          },
-          {
-            id: 3,
-            url: "../../../favicon.ico",
-            name: "姚明在世界杯",
-            createTime: "2020-10-16"
-          },
-        ],
-        resourceList: [],
-        dialogVisible: false,
-        dialogUpload: false,
-        dialogInput: "",
-        parentId: 0,
-        headers: {
-          Authorization: localStorage.getItem('loginToken')
-        },
-        uploadRule: {
-          name: [{ required: true, message: "请输入名称", trigger: 'blur' }]
-        },
-        uploadInfo: {
-          name: "",
-          fileSize: null,
-          unit: [1, 2, 3, 4],
-          url: ""
-        }
       };
     },
-    created(){
-      this.getList(this.parentId)
-    },
-    updated(){
-      // console.log(this.activeName)
-    },
+    
     methods: {
-      handleClick(tab, event) {
-        console.log(tab, event);
-      },
-      changeSort(id){
-        // console.log(e.currentTarget)
-        this.sortDefault = this.sortList[id]
-      },
-      changeFilter(id){ this.filterDefault = this.filterList[id] },
-      toggleSelectAll() { this.isToggleAll = !this.isToggleAll },
-      async getList(parentId){
-        let listData = await this.$http.get(
-          "/api/getResourceList",
-          {
-            headers: {
-              Authorization: localStorage.getItem("loginToken") 
-            },
-            params: {
-              orderColumn: 0,
-              pid: parentId,
-              type: 1
-            },
-            paramsSerializer: function(params) {
-              return Qs.stringify(params)
-            }
-          }
-        )
-        if(listData.data.code === "200") {
-          let lists = []
-          listData.data.data.forEach(item => {
-            let obj = {
-              id: item.id,
-              isFolder: item.isFolder == 1,
-              name: item.name,
-              url: item.url,
-              fileType: item.type,
-              createTime: item.createTime,
-            }
-            lists.push(obj)
-          })
-          this.resourceList = lists
-          // console.log(this.resourceList)
-        }
-      },
-      enterFolder(id){
-        console.log(id)
-        this.parentId = id
-        this.getList(this.parentId)
-      },
-      async newFolder(){
-        let listData = await this.$http.post(
-          "/api/addResource",
-          {
-            name: this.dialogInput,
-            isFolder: 1,
-            type: 1,
-            id: 0,
-            orderColumn: 0,
-            parentId: this.parentId,
-            pname: "",
-            size: 0,
-            unit: "",
-            url: ""
-          },
-          {
-            headers: {
-              Authorization: localStorage.getItem("loginToken") 
-            }
-          }
-        )
-        if(listData.data.code === "200"){
-          console.log(listData.data.msg)
-          this.dialogVisible = false
-          this.getList(this.parentId)
-        }
-      },
-      handleSuccess(res, file){
-        this.uploadInfo.url = res.data
-        this.uploadInfo.fileSize = Math.floor(file.size / 1024)
-        console.log(Math.floor(file.size / 1024))
-        // console.log(fileList)
-      },
-      clickEnsure(){
-        this.$refs["uploadForm"].validate(valid => {
-          valid && this.uploadFile()
-        })
-      },
-      async uploadFile() {
-        let requestData = {
-          name: this.uploadInfo.name,
-          size: this.uploadInfo.fileSize,
-          unit: this.uploadInfo.unit[0],
-          url: this.uploadInfo.url,
-          parentId: this.parentId,
-          isFolder: 0,
-          type: 1,
-        }
-        let uploadData = await this.$http.post(
-          "/api/addResource",
-          requestData,
-          {
-            headers: {
-              Authorization: localStorage.getItem("loginToken") 
-            }
-          }
-        )
-        if(uploadData.data.code === "200"){
-          console.log(uploadData.data.msg)
-          this.dialogUpload = false
-          this.getList(this.parentId)
-        }
-      }
+      handleClick() {},
     },
   }
 </script>
@@ -331,120 +125,5 @@
 }
 .tabs-content {
   width: 1060px;
-}
-.first-box {
-  width: 100%;
-  height: 40px;
-  display: flex;
-  justify-content: space-between;
-  /* border: 1px solid salmon; */
-  margin-bottom: 15px;
-}
-.first-left,
-.first-right {
-  display: flex;
-}
-.first-search {
-  width: 300px;
-  margin-right: 14px;
-}
-
-.dropdown-content {
-  margin-left: 27px;
-  margin-right: 20px;
-}
-
-
-.select-box {
-  width: 1059px;
-  height: 60px;
-  background-color: #EDEDED;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.select-left,
-.dropdown-container {
-  display: flex;
-}
-.dropdown-title {
-  background-color: #FFFFFF;
-  border-radius: 4px;
-  border: 1px solid #979797;
-} 
-.toggle {
-  width: 20px;
-  height: 20px;
-  margin-left: 19px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 2px;
-  border: 1px solid #979797;
-}
-.toggle-content {
-  width: 10px;
-  height: 10px;
-  background-color: #3BB0FE;
-}
-.select-all-text {
-  margin-left: 8px;
-  font-size: 18px;
-  font-weight: 500;
-  color: #4A4A4A;
-  line-height: 25px;
-}
-
-.select-left .back {
-  cursor: pointer;
-  margin-left: 15px;
-  font-size: 18px;
-}
-.main-box {
-  height: 600px;  
-  border-bottom: 1px solid lightgray;
-  overflow: auto;
-}
-.upload-wrapper {
-  display: flex;
-  /* border: 1px solid lime; */
-}
-.upload-box {
-  width: 300px;
-  /* border: 1px solid red; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.el-upload__tip {
-  text-align: center;
-}
-.name-input {
-  width: 350px;
-}
-
-</style>
-<style>
-.first-upload,
-.first-move {
-  /* height: 40px; */
-  background: #3BB0FE;
-  border-radius: 4px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #FFFFFF;
-  line-height: 18px;
-}
-.first-build {
-  border-radius: 4px;
-  border: 1px solid #3BB0FE;
-  font-size: 18px;
-  font-weight: 600;
-  color: #3BB0FE;
-  line-height: 18px;
-}
-.el-dialog__footer {
-  text-align: center;
 }
 </style>
