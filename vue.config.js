@@ -9,8 +9,8 @@ module.exports = {
         changeOrigin: true
       },
       "/api": {
-        // target: "http://122.51.133.191:8989",
-        target: "http://192.168.1.22:8080",
+        target: "http://122.51.133.191:8989",
+        // target: "http://192.168.1.22:8080",
         changeOrigin: true
       }
     }
