@@ -17,7 +17,7 @@
     </div>
 
     <div class="item-right">
-      <div class="item-btn">重新上传</div>
+      <div v-if="itemList.isFolder == 0" class="item-btn">重新上传</div>
       <div class="item-btn" 
         @click="dialogChangeName = true">重命名
       </div>
@@ -98,10 +98,16 @@
           "/api/updateResource",
           {
             id: this.itemList.id,
+            isFolder: this.itemList.isFolder ? 1 : 0,
+            size: this.itemList.size,
+            unit: this.itemList.unit,
             name: this.newName
           },
-          { headers: {
-              Authorization: localStorage.getItem("loginToken") } }
+          { 
+            headers: {
+              Authorization: localStorage.getItem("loginToken") 
+            } 
+          }
         )
         if(Data.data.code === "200"){
           console.log("update succeeded!")

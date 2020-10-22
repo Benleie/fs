@@ -3,7 +3,10 @@
     <div class="show-content">
       <div class="first-box">
         <div class="first-left">
-          <el-input placeholder="请输入关键字" class="first-search">
+          <el-input 
+            v-model="searchInput"
+            @change="searchData"
+            placeholder="请输入关键字" class="first-search">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
         </div>
@@ -93,13 +96,17 @@
         filterDefault: "全部",
         sortList: ["最近修改", "文件大小", "名称A-Z", "创建时间"],
         sortDefault: "最近修改",
-        resourceList: []
+        resourceList: [],
+        searchInput: ''
       };
     },
     created(){
-      this.getList()
+      // this.getList()
     },
     methods: {
+      searchData(){
+        console.log("searchData ing")
+      },
       changeSort(id){
         // console.log(e.currentTarget)
         this.sortDefault = this.sortList[id]

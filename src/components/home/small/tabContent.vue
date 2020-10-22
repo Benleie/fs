@@ -2,7 +2,11 @@
   <div class=''>
     <div class="first-box">
       <div class="first-left">
-        <el-input placeholder="请输入关键字" class="first-search">
+        <el-input
+          v-model="searchInput"
+          @input="searchData"  
+          placeholder="请输入关键字" 
+          class="first-search">
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
         </el-input>
         <el-button 
@@ -28,7 +32,7 @@
             <div class="toggle-content" v-if="isToggleAll"></div>
         </div>
         <div class="select-all-text">全选</div>
-        <div v-if="parentId !== 0" class="back" @click="getList(parentId = 0)">
+        <div v-if="parentId !== 0" class="back" @click="handleClickBack">
           <i class="el-icon-d-arrow-left"></i>
           <span>返回</span>
         </div>
@@ -72,9 +76,6 @@
               </el-dropdown-item>
               <el-dropdown-item 
                 @click.native="changeSort(2)">{{ sortList[2] }}
-              </el-dropdown-item>
-              <el-dropdown-item
-                @click.native="changeSort(3)">{{ sortList[3] }}
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -190,7 +191,7 @@
           this.typeIndex = ["image", "music", "video"].indexOf(newValue)
           this.typeCHName = ["图片", "音乐", "视频"][this.typeIndex]
           this.typeId = this.typeIndex + 1
-          this.getList(this.parentId)
+          this.getList()
         }
       }
     },
@@ -198,11 +199,12 @@
       return {
         typeIndex: null,
         typeId: 1,
+        orderColumn: "createTime",
         typeCHName: "图片",
         isToggleAll: false,
         filterList: ["最近一周", "最近一月", "最近一周"],
         filterDefault: "全部",
-        sortList: ["最近修改", "文件大小", "名称A-Z", "创建时间"],
+        sortList: ["创建时间", "更新时间", "名称A-Z"],
         sortDefault: "最近修改",
         itemLists: [
           {
@@ -236,6 +238,7 @@
         dialogUpload: false,
         dialogMove: false,
         dialogInput: "",
+        searchInput: "",
         parentId: 0,
         headers: {
           Authorization: localStorage.getItem('loginToken')
@@ -253,16 +256,57 @@
     },
     
     created(){
-      this.getList(this.parentId)
+      this.getList()
     },
     updated(){
       // console.log(this.resourceList)
       // console.log(this.folderList)
+      console.log("updated!")
     },
     methods: {
-      changeSort(id){
-        // console.log(e.currentTarget)
+      async searchData(){
+        console.log("search")
+        let listData = await this.$http.get(
+          "/api/getResourceByname",
+          {
+            headers: {
+              Authorization: localStorage.getItem("loginToken") 
+            },
+            params: {
+              name: this.searchInput,
+              type: this.typeId
+            },
+            paramsSerializer: function(params) {
+              return Qs.stringify(params)
+            }
+          }
+        )
+        if(listData.data.code === "200") {
+          let lists = []
+          listData.data.data.forEach(item => {
+            let obj = {
+              id: item.id,
+              isFolder: item.isFolder == 1,
+              isSelect: false,
+              // fileType: item.type,
+              name: item.name,
+              url: item.url,
+              createTime: item.createTime,
+            }
+            lists.push(obj)
+          })
+          this.resourceList = lists
+          this.setFolderList()
+        }
+      },  
+      async changeSort(id){
+        this.orderColumn = ["createTime", "updateTime", "name"][id]
+        this.getList()
         this.sortDefault = this.sortList[id]
+      },
+      handleClickBack(){
+        this.parentId = 0;
+        this.getList()
       },
       changeFilter(id){ this.filterDefault = this.filterList[id] },
       toggleSelectAll() {
@@ -294,7 +338,7 @@
         })
         this.folderList = returnArr
       },
-      async getList(parentId){
+      async getList(){
         let listData = await this.$http.get(
           "/api/getResourceList",
           {
@@ -302,8 +346,8 @@
               Authorization: localStorage.getItem("loginToken") 
             },
             params: {
-              orderColumn: 0,
-              pid: parentId,
+              orderColumn: this.orderColumn,
+              pid: this.parentId,
               type: this.typeId
             },
             paramsSerializer: function(params) {
@@ -319,6 +363,8 @@
               isFolder: item.isFolder == 1,
               isSelect: false,
               // fileType: item.type,
+              size: item.size,
+              unit: item.unit,
               name: item.name,
               url: item.url,
               createTime: item.createTime,
@@ -333,7 +379,8 @@
       refreshPage(getId){
         let id = getId || this.parentId
         console.log(getId)
-        this.getList(this.parentId = id)
+        this.parentId = id
+        this.getList()
       },
       clickFolder(item){
         // 点击只能选中一项，所以需要清除
@@ -377,7 +424,7 @@
           if(Data.data.code === "200"){
             console.log("move done")
             this.dialogMove = false
-            this.getList(this.parentId)
+            this.getList()
           }
         }
         // console.log(ids)
@@ -424,7 +471,7 @@
         if(listData.data.code === "200"){
           console.log(listData.data.msg)
           this.dialogVisible = false
-          this.getList(this.parentId)
+          this.getList()
         }
       },
       handleSuccess(res, file){
@@ -460,7 +507,7 @@
         if(uploadData.data.code === "200"){
           console.log(uploadData.data.msg)
           this.dialogUpload = false
-          this.getList(this.parentId)
+          this.getList()
         }
       }
     },
