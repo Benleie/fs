@@ -25,6 +25,9 @@ export default {
 body, html {
   margin: 0;
 }
+#app {
+  width: 100%;
+}
 body::-webkit-scrollbar {
   display: none;
 }

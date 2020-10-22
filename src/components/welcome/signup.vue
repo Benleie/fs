@@ -196,7 +196,8 @@
 
 <style scoped>
 .wrapper {
-  width: 1920px;
+  /* width: 1920px; */
+  width: 100%;
   height: 1080px;
   background-color: whitesmoke;
   background: url("~@/assets/london.jpg") no-repeat;

@@ -1,8 +1,8 @@
 <template>
-  <div class="item-box">
+  <div class="item-box" :class="itemList.isSelect ? 'is-selected' : ''">
     <div class="item-left">
-      <div class="toggle" @click="toggle">
-        <div class="toggle-content" v-if="isToggle"></div>
+      <div class="toggle" @click="clickToggle">
+        <div class="toggle-content" v-if="itemList.isSelect"></div>
       </div>
       <div class="item-image">
         <img v-if="itemList.isFolder" :src="folderIcon">
@@ -11,44 +11,144 @@
         <img v-else :src="itemList.url || imageIcon">
       </div>
       <div class="item-info">
-        <div class="title" @click="enterFolder">{{ itemList.name }} </div>
+        <div class="title" @dblclick="enterFolder">{{ itemList.name }} </div>
         <div>{{ itemList.createTime || myTime  }} </div>
       </div>
     </div>
 
     <div class="item-right">
       <div class="item-btn">重新上传</div>
-      <div class="item-btn">重命名</div>
-      <div class="item-btn">删除</div>
+      <div class="item-btn" 
+        @click="dialogChangeName = true">重命名
+      </div>
+      <div class="item-btn" @click="dialogDel = true">删除</div>
     </div>
+
+    <el-dialog
+      title="重命名"
+      :visible.sync="dialogChangeName"
+      width="30%">
+      <el-input v-model="newName" placeholder="请输入新名称"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogChangeName = false">取 消</el-button>
+        <el-button type="primary" @click="changeName">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="删除"
+      :visible.sync="dialogDel"
+      width="30%">
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogDel = false">取 消</el-button>
+        <el-button type="primary" @click="deleteItem">删 除</el-button>
+      </span>
+    </el-dialog>
   </div>
+  
 </template>
 
 <script>
   //import x from ''
+  import Qs from "qs"
   export default {
     props:{
-        itemList: { 
-            type: Object,
-            required: true   
-        }
+      itemList: { 
+        type: Object,
+        required: true   
+      },
+      selectAll: {
+        type: Boolean,
+        required: true
+      }
     },
+    /* watch: {
+      selectAll: {
+        handler(newValue){
+          this.isToggle = newValue
+        }
+      }
+    }, */
     data() {
       return {
-        isToggle: false,
+        // isToggle: this.selectAll,
         folderIcon: "../../../../folder.png",
         videoIcon: "../../.././video.png",
         musicIcon: "../../../../music.png",
         imageIcon:  "../../../../image.png",
-        myTime: "2020-10-16"
+        myTime: "2020-10-16",
+        dialogChangeName: false,
+        dialogDel: false,
+        newName: ""
       };
     },
     methods: {
-      toggle(){ this.isToggle = !this.isToggle; },
+      clickToggle(){ 
+        // console.log("toggled")
+        // this.isToggle = !this.isToggle;
+        this.$emit("selectStateChange")
+      },
+        
       enterFolder(){
         if(this.itemList.isFolder)
           this.$emit("refresh", this.itemList.id)
-      }
+      },
+      async changeName(){
+        let Data = await this.$http.put(
+          "/api/updateResource",
+          {
+            id: this.itemList.id,
+            name: this.newName
+          },
+          { headers: {
+              Authorization: localStorage.getItem("loginToken") } }
+        )
+        if(Data.data.code === "200"){
+          console.log("update succeeded!")
+          this.dialogChangeName = false
+          this.$emit("refresh")
+        }
+      },
+      async deleteItem(){
+        /* let xhr = new XMLHttpRequest()
+        xhr.open("delete", "/api/recyclebin/deleteByLogic", true)
+        xhr.onload = e => {
+          console.log(e)
+        }
+        xhr.setRequestHeader("Authorization", localStorage.getItem("loginToken"))
+        xhr.setRequestHeader("Content-Type", "application/json")
+        // xhr.responseType = "application/json"
+        
+            //   id: this.itemList.id,
+            //   type: 0
+        xhr.send(JSON.stringify({
+          id: this.itemList.id,
+          type: 0
+        })) */
+        let requestData = {
+          id: this.itemList.id,
+          type: 0
+        }
+        let Data = await this.$http.get(
+          "/api/recyclebin/deleteByLogic",
+          { 
+            headers: { 
+              // 'content-type': "application/json",
+              Authorization: localStorage.getItem("loginToken"),
+            },
+            params: requestData,
+            paramsSerializer: function(params) {
+              return Qs.stringify(params)
+            },
+          }
+        )
+        if(Data.data.code === "200"){
+          console.log("delete succeeded!")
+          this.dialogDel = false
+          this.$emit("refresh")
+        }
+      },
+      
       /* async enterFolder() {
         let listData = await this.$http.get(
           "/api/getResourceList",
@@ -111,7 +211,9 @@
 }
 .item-box:hover {
   background-color: #f3f3f3;
+  /* background-color: #EAF9FD; */
 }
+
 .item-left,
 .item-right {
   display: flex;
@@ -142,4 +244,11 @@
   margin-right: 48px;
   cursor: pointer;
 }
+.is-selected {
+  /* avoid being changed by hover */
+  background-color: #EAF9FD !important;
+}
+</style>
+<style>
+
 </style>

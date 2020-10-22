@@ -3,7 +3,7 @@
     <div class="main relative-box">
         <div class="fixed-box">
           <div>测试账号： 15071290003</div>
-          <div>密码： 123456</div>
+          <div>密码： &nbsp;&nbsp;&nbsp;&nbsp;123456</div>
         </div>
         <div class="index-title">登录</div>
         <div class="index-title2">用新视角看新世界</div>
@@ -104,11 +104,21 @@
         // ?code=xxxx&&state=xxxx
         let wxCode = queryStr.match(/code=(\S*?)&&/)[1]
           , wxState = queryStr.substring(queryStr.lastIndexOf('state=') + 'state='.length)
-        let loginData = await this.$http.post("/oauth/login", {
-          code: wxCode,
-          state: wxState
-        })
-        console.log(loginData)
+        let loginData = await this.$http.get("/oauth/login",
+          { 
+            params: {
+              code: wxCode,
+              state: wxState
+            },
+            paramsSerializer: function(params) {
+              return Qs.stringify(params)
+            }, 
+          }
+        )
+        if(loginData.data.code === "200"){
+          localStorage.setItem("loginToken", "bearer " + loginData.data.data.access_token)
+          this.$router.push({ path: "/home" })
+        }
       },
       closeLogin(){
         this.$router.push({ path: "/welcome" })
@@ -123,7 +133,8 @@
 
 <style scoped>
 .wrapper {
-  width: 1920px;
+  /* width: 1920px; */
+  width: 100%;
   height: 1080px;
   background-color: whitesmoke;
   background: url("../assets/london.jpg") no-repeat;

@@ -10,14 +10,19 @@
           @click="dialogUpload = true">上传{{ typeCHName }}</el-button>
       </div>
       <div class="first-right">
-        <el-button class="first-move">移动到</el-button>
+        <el-button
+          :disabled="!hasSelect ? true : false "
+          @click="dialogMove = true"
+          class="first-move"
+          :class="hasSelect ? 'has-select' : ''"
+          >移动到
+        </el-button>
         <el-button 
           class="first-build" 
           @click="dialogVisible = true">新建文件夹</el-button>
       </div>
     </div>
     <div class="select-box">
-      <!-- <el-radio v-model="isSelected" label="1">全选</el-radio> -->
       <div class="select-left">
         <div class="toggle" @click="toggleSelectAll">
             <div class="toggle-content" v-if="isToggleAll"></div>
@@ -77,12 +82,17 @@
       </div>
     </div>
     <div class="main-box">
-      <Item
-        :itemList="itemData"
-        v-for="itemData in resourceList"
-        :key="itemData.id"
-        @refresh="enterFolder"
-      />
+      <div v-if="resourceList.length !== 0">
+        <Item
+          :itemList="itemData"
+          :selectAll="isToggleAll"
+          v-for="itemData in resourceList"
+          :key="itemData.id"
+          @selectStateChange="changeSelectObj(itemData)"
+          @refresh="refreshPage">
+        </Item>
+      </div>
+      <div v-else class="no-folder">该文件夹为空</div>
     </div>
 
     <el-dialog
@@ -95,6 +105,31 @@
         <el-button type="primary" @click="newFolder">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="移动到"
+      :visible.sync="dialogMove"
+      width="30%">
+      <div class="remove-box">
+        <div 
+          v-for="item in folderList"
+          :key="item.id"
+          class="folder-item"
+          :class="item.isSelect ? 'is-selected' : ''"
+          @click="clickFolder(item)">
+          <div class="image">
+            <img height="20px" src="@/assets/folder.png">
+          </div>
+          <div class="title">{{ item.name }}</div>
+        </div>
+        
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogMove = false">取 消</el-button>
+        <el-button type="primary" @click="removeTo">确 定</el-button>
+      </span>
+    </el-dialog>
+    
     <el-dialog
       title="上传"
       :visible.sync="dialogUpload"
@@ -122,7 +157,10 @@
               v-model="uploadInfo.name"
               class="name-input"></el-input>
           </el-form-item>
-          <div>大小为</div>
+          <el-form-item label="size:">
+            <div>333</div>
+          </el-form-item>
+          
         </el-form>
       </div>
       
@@ -161,7 +199,7 @@
         typeIndex: null,
         typeId: 1,
         typeCHName: "图片",
-        isToggleAll: true,
+        isToggleAll: false,
         filterList: ["最近一周", "最近一月", "最近一周"],
         filterDefault: "全部",
         sortList: ["最近修改", "文件大小", "名称A-Z", "创建时间"],
@@ -171,24 +209,32 @@
             id: 1,
             url: "../../../favicon.ico",
             name: "姚明在世界杯",
+            isSelect: false,
             createTime: "2020-10-16"
           },
           {
             id: 2,
             url: "../../../favicon.ico",
             name: "姚明在世界杯",
+            isSelect: false,
             createTime: "2020-10-16"
           },
           {
             id: 3,
             url: "../../../favicon.ico",
             name: "姚明在世界杯",
+            isSelect: false,
             createTime: "2020-10-16"
           },
         ],
         resourceList: [],
+        folderList: [],
+        folderId: 0,
+        selectObj: {},
+        hasSelect: false,
         dialogVisible: false,
         dialogUpload: false,
+        dialogMove: false,
         dialogInput: "",
         parentId: 0,
         headers: {
@@ -205,11 +251,13 @@
         }
       };
     },
+    
     created(){
       this.getList(this.parentId)
     },
     updated(){
       // console.log(this.resourceList)
+      // console.log(this.folderList)
     },
     methods: {
       changeSort(id){
@@ -217,7 +265,35 @@
         this.sortDefault = this.sortList[id]
       },
       changeFilter(id){ this.filterDefault = this.filterList[id] },
-      toggleSelectAll() { this.isToggleAll = !this.isToggleAll },
+      toggleSelectAll() {
+        this.isToggleAll = !this.isToggleAll
+        if(this.isToggleAll){
+          this.hasSelect = true
+          this.resourceList.forEach(item => {
+            item.isSelect = true
+          })
+        } else {
+          this.hasSelect = false
+          this.resourceList.forEach(item => {
+            item.isSelect = false
+          })
+        }
+      },
+      setFolderList() {
+        let returnArr = []
+        let tempArr = this.resourceList.filter(item => {
+          return item.isFolder
+        })
+        tempArr.forEach(item => {
+          let obj = {
+            id: item.id,
+            name: item.name,
+            isSelect: false
+          }
+          returnArr.push(obj)
+        })
+        this.folderList = returnArr
+      },
       async getList(parentId){
         let listData = await this.$http.get(
           "/api/getResourceList",
@@ -241,7 +317,8 @@
             let obj = {
               id: item.id,
               isFolder: item.isFolder == 1,
-              fileType: item.type,
+              isSelect: false,
+              // fileType: item.type,
               name: item.name,
               url: item.url,
               createTime: item.createTime,
@@ -249,13 +326,79 @@
             lists.push(obj)
           })
           this.resourceList = lists
+          this.setFolderList()
           // console.log(this.resourceList)
         }
       },
-      enterFolder(id){
-        console.log(id)
-        this.parentId = id
-        this.getList(this.parentId)
+      refreshPage(getId){
+        let id = getId || this.parentId
+        console.log(getId)
+        this.getList(this.parentId = id)
+      },
+      clickFolder(item){
+        // 点击只能选中一项，所以需要清除
+        this.folderId = 0
+        this.folderList.forEach(value => {
+          value.isSelect = false
+        })
+        // console.log(this.folderList)
+        item.isSelect = true
+        this.folderId = item.id
+        console.log(item)
+      },
+      async removeTo(){
+        let ids = []
+        this.resourceList.forEach(item => {
+          if(item.isSelect){
+            ids.push(Number(item.id))
+          }
+        })
+        if(ids.includes(Number(this.folderId))) {
+          console.log("请选择正确的目标文件夹")
+        } else {
+          // let jsonIds = ()...[ids]
+          let Data = await this.$http.put(
+            "/api/moveTo",
+            {},
+            {
+              params: {
+                // 
+                ids: ids.join(","),
+                targetId: this.folderId
+              },
+              paramsSerializer: function(params) {
+                return Qs.stringify(params)
+              },
+              headers: {
+                Authorization: localStorage.getItem("loginToken") 
+              }
+            }
+          )
+          if(Data.data.code === "200"){
+            console.log("move done")
+            this.dialogMove = false
+            this.getList(this.parentId)
+          }
+        }
+        // console.log(ids)
+        // console.log(this.folderId)
+      },
+      changeSelectObj(item){
+        item.isSelect = !item.isSelect
+
+        this.hasSelect = this.resourceList.some(value => {
+          return value.isSelect
+        })
+        console.log(this.hasSelect)
+
+
+        /* isSelect 
+          ? this.selectObj[getId] = isSelect
+          : delete this.selectObj[getId]
+        this.hasSelect = Object.keys(this.selectObj).length
+          ? true
+          : false */
+        // console.log(Object.keys(this.selectObj))
       },
       async newFolder(){
         let listData = await this.$http.post(
@@ -400,6 +543,10 @@
   border-bottom: 1px solid lightgray;
   overflow: auto;
 }
+.no-folder {
+  margin-top: 10px;
+  text-align: center;
+}
 .upload-wrapper {
   display: flex;
   /* border: 1px solid lime; */
@@ -417,17 +564,50 @@
 .name-input {
   width: 350px;
 }
+.remove-box {
+  height: 400px;  
+  border: 1px solid lightgray;
+  overflow: auto;
+}
+.remove-box .folder-item {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  border-bottom: 1px solid #f3f3f3;
+}
+.folder-item:hover {
+  background-color: #f3f3f3;
+}
+.is-selected {
+  /* avoid being changed by hover */
+  background-color: #EAF9FD !important;
+}
+.folder-item .image {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 </style>
 <style>
-.first-upload,
-.first-move {
-  /* height: 40px; */
+.first-upload {
   background: #3BB0FE;
   border-radius: 4px;
   font-size: 18px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: #ffffff;
   line-height: 18px;
+}
+.first-move {
+  background: #ffffff;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #4A4A4A;
+  line-height: 18px;
+}
+.has-select {
+  background-color: #3BB0FE;
+  color: #ffffff;
 }
 .first-build {
   border-radius: 4px;

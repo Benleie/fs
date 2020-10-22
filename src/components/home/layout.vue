@@ -4,7 +4,7 @@
       <div class="header-text1">全景时光机</div>
       <div class="header-text2">个人主页</div>
       <div class="header-btn">
-        <el-button class="upload-btn">上传全景</el-button>
+        <el-button class="upload-btn" @click="dialogUpload = true">上传全景</el-button>
       </div>
       <div class="header-info">
         <el-dropdown trigger="click">
@@ -62,6 +62,48 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      title="上传"
+      :visible.sync="dialogUpload"
+      width="65%"
+      >
+      <div class="upload-wrapper">
+        <el-upload
+          class="upload-box"
+          action="/api/upload/simpleUpload?module=resource"
+          :headers="headers"
+          :on-success="handleSuccess"
+          :limit="3"
+          >
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+        <el-form
+          :model="uploadInfo"
+          ref="uploadForm"
+          :rules="uploadRule"
+          :hide-required-asterisk="true"
+          label-width="100px">
+          <el-form-item label="名称" prop="name">
+            <el-input
+              v-model="uploadInfo.name"
+              class="name-input"></el-input>
+          </el-form-item>
+          <el-form-item label="简介" prop="summary">
+            <el-input
+              v-model="uploadInfo.summary"
+              class="name-input"></el-input>
+          </el-form-item>
+          
+          
+        </el-form>
+      </div>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogUpload = false">取 消</el-button>
+        <el-button type="primary" @click="clickEnsure">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -72,6 +114,21 @@
     data() {
       return {
         iconUrl: "@/assets/logo.png",
+        dialogUpload: false,
+        headers: {
+          Authorization: localStorage.getItem('loginToken')
+        },
+        uploadRule: {
+          name: [{ required: true, message: "请输入名称", trigger: 'blur' }],
+          summary: [{ required: true, message: "请输入简介", trigger: 'blur' }]
+        },
+        uploadInfo: {
+          name: "",
+          summary: "",
+          fileSize: null,
+          unit: [1, 2, 3, 4],
+          url: ""
+        }
       };
     },
     methods: {
@@ -91,6 +148,42 @@
         }
         
       },
+      handleSuccess(res, file){
+        this.uploadInfo.url = res.data
+        this.uploadInfo.fileSize = Math.floor(file.size / 1024)
+        console.log(Math.floor(file.size / 1024))
+        // console.log(fileList)
+      },
+      clickEnsure(){
+        this.$refs["uploadForm"].validate(valid => {
+          valid && this.uploadFile()
+        })
+      },
+      async uploadFile() {
+        let requestData = {
+          name: this.uploadInfo.name,
+          summary: this.uploadInfo.summary,
+          size: this.uploadInfo.fileSize,
+          unit: this.uploadInfo.unit[0],
+          shotTime: "2020-10-15 00:00:00",
+          panosUrl: "",
+          picUrl: this.uploadInfo.url,
+        }
+        let uploadData = await this.$http.post(
+          "/api/panos/info",
+          requestData,
+          {
+            headers: {
+              Authorization: localStorage.getItem("loginToken") 
+            }
+          }
+        )
+        if(uploadData.data.code === "200"){
+          console.log(uploadData.data.msg)
+          this.dialogUpload = false
+          // this.getList(this.parentId)
+        }
+      }
     },
   }
 </script>
@@ -98,7 +191,8 @@
 <style scoped>
 
 .wrapper {
-  width: 1920px;
+  /* width: 1920px; */
+  width: 100%;
   height: 1080px;
   background: #F8F8F8;
   border: 1px solid #979797;
@@ -221,7 +315,23 @@
   line-height: 22px;
   cursor: pointer;
 }
-
+.upload-wrapper {
+  display: flex;
+  /* border: 1px solid lime; */
+}
+.upload-box {
+  width: 300px;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.el-upload__tip {
+  text-align: center;
+}
+.name-input {
+  width: 350px;
+}
 </style>
 
 <style>
