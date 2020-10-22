@@ -61,7 +61,8 @@
       // console.log(CityList)
       //使用微信open平台返回的code和state登录
       let queryStr = window.location.search
-      if(queryStr.indexOf("code=") !== -1 && queryStr.includes("&&state=")){
+      if(queryStr.indexOf("code=") !== -1 && queryStr.includes("state=")){
+        console.log("wx login")
         this.loginWithWxData(queryStr)
       }
     },
@@ -86,6 +87,7 @@
         })
         let Data = loginData.data
         if(Data.code === "200") {
+          // let 
           localStorage.setItem("loginToken", "bearer " + Data.data.access_token)
           this.$router.push({ path: "/home" })
         }
@@ -102,7 +104,7 @@
       },
       async loginWithWxData(queryStr){
         // ?code=xxxx&&state=xxxx
-        let wxCode = queryStr.match(/code=(\S*?)&&/)[1]
+        let wxCode = queryStr.match(/code=(\S*?)&state=/)[1]
           , wxState = queryStr.substring(queryStr.lastIndexOf('state=') + 'state='.length)
         let loginData = await this.$http.get("/oauth/login",
           { 

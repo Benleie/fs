@@ -4,14 +4,20 @@
       <div class="toggle" @click="clickToggle">
         <div class="toggle-content" v-if="itemList.isSelect"></div>
       </div>
-      <div class="item-image">
+      <div class="item-image" @dblclick="enterFolder">
         <img v-if="itemList.isFolder" :src="folderIcon">
         <img v-else-if="itemList.fileType == 2" :src="musicIcon">
         <img v-else-if="itemList.fileType == 3" :src="videoIcon">
         <img v-else :src="itemList.url || imageIcon">
       </div>
       <div class="item-info">
-        <div class="title" @dblclick="enterFolder">{{ itemList.name }} </div>
+        <div 
+          class="title"
+          :class="itemList.titleHover ? 'bottom-line' : ''"
+          @mouseover="itemList.titleHover = true"
+          @mouseleave="itemList.titleHover = false"
+          @click="enterFolder">{{ itemList.name }} 
+        </div>
         <div>{{ itemList.createTime || myTime  }} </div>
       </div>
     </div>
@@ -88,7 +94,6 @@
         // this.isToggle = !this.isToggle;
         this.$emit("selectStateChange")
       },
-        
       enterFolder(){
         if(this.itemList.isFolder)
           this.$emit("refresh", this.itemList.id)
@@ -240,6 +245,9 @@
   line-height: 50px;
   font-size: 30px;
   cursor: pointer;
+}
+.bottom-line {
+  font-weight: 600;
 }
 .item-btn {
   font-size: 16px;

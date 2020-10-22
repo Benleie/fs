@@ -109,6 +109,7 @@
 
 <script>
   //import x from ''
+  import Qs from 'qs'
   export default {
     components: {},
     data() {
@@ -131,7 +132,33 @@
         }
       };
     },
+    created(){
+      //fix 701
+      this.fix701()
+    },
     methods: {
+      async fix701(){
+        let listData = await this.$http.get(
+          "/api/getResourceList",
+          {
+            headers: {
+              Authorization: localStorage.getItem("loginToken") 
+            },
+            params: {
+              orderColumn: "",
+              pid: 0,
+              type: 1
+            },
+            paramsSerializer: function(params) {
+              return Qs.stringify(params)
+            }
+          }
+        )
+        if(listData.data.code === "701"){
+          localStorage.removeItem("loginToken")
+          this.$router.push({ path: "/login" })
+        }
+      },
       async logOut(){
         let logoutData = await this.$http.post(
           "/api/logout",
