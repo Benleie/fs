@@ -23,7 +23,11 @@
     </div>
 
     <div class="item-right">
-      <div v-if="itemList.isFolder == 0" class="item-btn">重新上传</div>
+      <div 
+        v-if="itemList.isFolder == 0"
+        @click="uploadAgain" 
+        class="item-btn">重新上传
+      </div>
       <div class="item-btn" 
         @click="dialogChangeName = true">重命名
       </div>
@@ -50,6 +54,45 @@
         <el-button type="primary" @click="deleteItem">删 除</el-button>
       </span>
     </el-dialog>
+
+   <!--  <el-dialog
+      title="上传"
+      :visible.sync="dialogUpload"
+      width="65%"
+      >
+      <div class="upload-wrapper">
+        <el-upload
+          class="upload-box"
+          action="/api/upload/simpleUpload?module=resource"
+          :headers="headers"
+          :on-success="handleSuccess"
+          :limit="3"
+          >
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+        <el-form
+          :model="uploadInfo"
+          ref="uploadForm"
+          :rules="uploadRule"
+          :hide-required-asterisk="true"
+          label-width="100px">
+          <el-form-item label="名称" prop="name">
+            <el-input
+              v-model="uploadInfo.name"
+              class="name-input"></el-input>
+          </el-form-item>
+          <el-form-item label="size:">
+            <div>333</div>
+          </el-form-item>
+          
+        </el-form>
+      </div>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogUpload = false">取 消</el-button>
+        <el-button type="primary" @click="uploadAgain">确 定</el-button>
+      </span>
+    </el-dialog> -->
   </div>
   
 </template>
@@ -88,6 +131,7 @@
         newName: ""
       };
     },
+    
     methods: {
       clickToggle(){ 
         // console.log("toggled")
@@ -98,6 +142,9 @@
         if(this.itemList.isFolder)
           this.$emit("refresh", this.itemList.id)
       },
+      uploadAgain(){ 
+        this.$emit('uploadAgain')
+       },
       async changeName(){
         let Data = await this.$http.put(
           "/api/updateResource",
@@ -261,6 +308,17 @@
 .is-selected {
   /* avoid being changed by hover */
   background-color: #EAF9FD !important;
+}
+.upload-wrapper {
+  display: flex;
+  /* border: 1px solid lime; */
+}
+.upload-box {
+  width: 300px;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 </style>
 <style>

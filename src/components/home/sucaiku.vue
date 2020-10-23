@@ -1,5 +1,5 @@
 <template>
-  <div class='-tabswrapper'>
+  <div class='tabs-wrapper'>
     <el-tabs v-model="activeName" @tab-click="handleClick" class="tabs-content">
       <el-tab-pane label="图片素材" name="image">
         <tab-content :typeName="activeName"></tab-content>

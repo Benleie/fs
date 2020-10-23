@@ -32,7 +32,7 @@
             <div class="toggle-content" v-if="isToggleAll"></div>
         </div>
         <div class="select-all-text">全选</div>
-        <div v-if="parentId !== 0" class="back" @click="handleClickBack">
+        <div v-if="parentId !== 0" class="click-back" @click="handleClickBack">
           <i class="el-icon-d-arrow-left"></i>
           <span>返回</span>
         </div>
@@ -90,6 +90,7 @@
           v-for="itemData in resourceList"
           :key="itemData.id"
           @selectStateChange="changeSelectObj(itemData)"
+          @uploadAgain="uploadAgain(itemData)"
           @refresh="refreshPage">
         </Item>
       </div>
@@ -159,7 +160,7 @@
               class="name-input"></el-input>
           </el-form-item>
           <el-form-item label="size:">
-            <div>333</div>
+            <div>{{ sizeInfo }}</div>
           </el-form-item>
           
         </el-form>
@@ -167,7 +168,7 @@
       
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogUpload = false">取 消</el-button>
-        <el-button type="primary" @click="clickEnsure">确 定</el-button>
+        <el-button type="primary" @click="uploadFile">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -240,21 +241,27 @@
         dialogInput: "",
         searchInput: "",
         parentId: 0,
+        itemId: null,
         headers: {
           Authorization: localStorage.getItem('loginToken')
         },
+        isUploadAgain: false,
         uploadRule: {
           name: [{ required: true, message: "请输入名称", trigger: 'blur' }]
         },
         uploadInfo: {
           name: "",
-          fileSize: null,
+          fileSize: 0,
           unit: [1, 2, 3, 4],
           url: ""
         }
       };
     },
-    
+    computed: {
+      sizeInfo(){
+        return this.uploadInfo.fileSize + ["KB", "MB"][0]
+      }
+    },
     created(){
       this.getList()
     },
@@ -482,35 +489,48 @@
         console.log(Math.floor(file.size / 1024))
         // console.log(fileList)
       },
-      clickEnsure(){
-        this.$refs["uploadForm"].validate(valid => {
-          valid && this.uploadFile()
-        })
+      uploadAgain(item){
+        this.itemId = item.id
+        this.dialogUpload = true
+        this.isUploadAgain = true
       },
       async uploadFile() {
-        let requestData = {
-          name: this.uploadInfo.name,
-          size: this.uploadInfo.fileSize,
-          unit: this.uploadInfo.unit[0],
-          url: this.uploadInfo.url,
-          parentId: this.parentId,
-          isFolder: 0,
-          type: this.typeId,
-        }
-        let uploadData = await this.$http.post(
-          "/api/addResource",
-          requestData,
-          {
-            headers: {
-              Authorization: localStorage.getItem("loginToken") 
+        this.$refs["uploadForm"].validate(async (valid) => {
+          if(!valid) console.log("请正确输入")
+          else {
+            let uploadUrl = this.isUploadAgain
+              ? "/api/updateResource"
+              : "/api/addResource"
+            let requestData = {
+              id: this.itemId,
+              name: this.uploadInfo.name,
+              size: this.uploadInfo.fileSize,
+              unit: this.uploadInfo.unit[0],
+              url: this.uploadInfo.url,
+              parentId: this.parentId,
+              isFolder: 0,
+              type: this.typeId,
+            }
+            let uploadData = await this.$http.request(
+              { 
+                url: uploadUrl,
+                method:  this.isUploadAgain ? 'put' : 'post',
+                data: requestData,
+                headers: {
+                  Authorization: localStorage.getItem("loginToken") 
+                }
+              }
+            )
+            console.log(uploadData)
+            if(uploadData.data.code === "200"){
+              console.log(uploadData.data.msg)
+              this.dialogUpload = false
+              this.isUploadAgain = false
+              this.getList()
             }
           }
-        )
-        if(uploadData.data.code === "200"){
-          console.log(uploadData.data.msg)
-          this.dialogUpload = false
-          this.getList()
-        }
+        })
+        
       }
     },
   }
@@ -582,14 +602,15 @@
   line-height: 25px;
 }
 
-.select-left .back {
+.select-left .click-back {
   cursor: pointer;
   margin-left: 15px;
   font-size: 18px;
 }
 .main-box {
-  height: 600px;  
-  border-bottom: 1px solid lightgray;
+  width: 1060px;
+  height: 760px;  
+  border: 1px solid #F4F4F4;
   overflow: auto;
 }
 .no-folder {

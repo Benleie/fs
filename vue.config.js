@@ -1,4 +1,10 @@
 module.exports = {
+  chainWebpack: config => {
+    config.plugin('html').tap(args => {
+      args[0].title= '全景时光机'
+      return args
+    })
+  },
   devServer: {
     // 微信登录需要内网穿透
     // disableHostCheck: true,
