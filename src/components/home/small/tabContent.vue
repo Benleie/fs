@@ -4,7 +4,7 @@
       <div class="first-left">
         <el-input
           v-model="searchInput"
-          @input="searchData"  
+          @input="searchInputChange"  
           placeholder="请输入关键字" 
           class="first-search">
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
@@ -271,8 +271,13 @@
       console.log("updated!")
     },
     methods: {
+      // /api/getResourceByname接口name为空时返回[]
+      searchInputChange(){
+        if(this.searchInput === '') 
+          this.getList()
+        else this.searchData()
+      },
       async searchData(){
-        console.log("search")
         let listData = await this.$http.get(
           "/api/getResourceByname",
           {
@@ -283,9 +288,9 @@
               name: this.searchInput,
               type: this.typeId
             },
-            paramsSerializer: function(params) {
+            /* paramsSerializer: function(params) {
               return Qs.stringify(params)
-            }
+            } */
           }
         )
         if(listData.data.code === "200") {
