@@ -9,10 +9,12 @@
         <div class="index-title2">用新视角看新世界</div>
 
         <el-form>
+
           <el-form-item>
             <el-input 
               placeholder="请输入账号"
               v-model="loginUser"
+              autocomplete="off"
               class="login-input">
               <i slot="prefix" class="el-input__icon el-icon-user icon-style"></i>
               </el-input>
@@ -21,7 +23,6 @@
             <el-input
               placeholder="请输入密码"
               show-password
-              autocomplete="new-password"
               v-model="loginPwd"
               class="login-input">
               <i slot="prefix" class="el-input__icon el-icon-lock icon-style"></i>
@@ -62,7 +63,6 @@
       //使用微信open平台返回的code和state登录
       let queryStr = window.location.search
       if(queryStr.indexOf("code=") !== -1 && queryStr.includes("state=")){
-        console.log("wx login")
         this.loginWithWxData(queryStr)
       }
     },
@@ -135,7 +135,8 @@
 
 <style scoped>
 .wrapper {
-  /* width: 1920px; */
+  /* width: 1920px;
+   */
   width: 100%;
   height: 1080px;
   background-color: whitesmoke;
@@ -315,10 +316,14 @@
   width: 450px;
 }
 
+
 </style>
 
 
 <style>
+/* input[type=password] {
+  background-color: #666666;
+} */
 .login-input input {
   width: 350px;
   height: 58px;

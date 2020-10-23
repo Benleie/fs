@@ -97,11 +97,12 @@
           async lazyLoad(node, resolve){
             const { level, value } = node;
             if(level == 0) {
-              let url = "/api/province/getProvince"
+              // /oauth/province/getProvince
+              let url = "/oauth/province/getProvince"
               _this.getProviceAndCity(url, resolve)
             }
             if(level == 1){
-              let url = "/api/province/getCity/" + value
+              let url = "/oauth/province/getCity/" + value
               _this.getProviceAndCity(url, resolve)
             }
           }
@@ -164,12 +165,7 @@
       async getProviceAndCity(url, resolve){
         let isFalse = url.indexOf("getCity") !== -1
         let ProvinceData = await this.$http.get(
-          url,
-          {
-            headers: {
-              "Authorization": "bearer e187f1b6-b2f2-47d7-9e01-8cd0ebf262ac"
-            }
-          }
+          url
         )
         if(ProvinceData.data.code === "200"){
           const nodes = Array.from({ 
