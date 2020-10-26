@@ -112,7 +112,7 @@
       title="移动到"
       :visible.sync="dialogMove"
       width="30%">
-      <div class="remove-box">
+      <div class="move-box">
         <div 
           v-for="item in folderList"
           :key="item.id"
@@ -128,7 +128,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogMove = false">取 消</el-button>
-        <el-button type="primary" @click="removeTo">确 定</el-button>
+        <el-button type="primary" @click="moveTo">确 定</el-button>
       </span>
     </el-dialog>
     
@@ -201,6 +201,8 @@
         typeIndex: null,
         typeId: 1,
         orderColumn: "createTime",
+        parentId: 0,
+        hasSelect: false,
         typeCHName: "图片",
         isToggleAll: false,
         filterList: ["最近一周", "最近一月", "最近一周"],
@@ -234,13 +236,11 @@
         folderList: [],
         folderId: 0,
         selectObj: {},
-        hasSelect: false,
         dialogVisible: false,
         dialogUpload: false,
         dialogMove: false,
         dialogInput: "",
         searchInput: "",
-        parentId: 0,
         itemId: null,
         headers: {
           Authorization: localStorage.getItem('loginToken')
@@ -264,6 +264,7 @@
     },
     created(){
       this.getList()
+      setInterval(this.getList, 1000)
     },
     updated(){
       // console.log(this.resourceList)
@@ -319,6 +320,7 @@
       },
       handleClickBack(){
         this.parentId = 0;
+        this.hasSelect = false
         this.getList()
       },
       changeFilter(id){ this.filterDefault = this.filterList[id] },
@@ -390,11 +392,14 @@
           // console.log(this.resourceList)
         }
       },
+      //进入文件夹，刷新页面
       refreshPage(getId){
         let id = getId || this.parentId
         console.log(getId)
         this.parentId = id
         this.getList()
+        // 清除
+        this.hasSelect = false
       },
       clickFolder(item){
         // 点击只能选中一项，所以需要清除
@@ -407,7 +412,7 @@
         this.folderId = item.id
         console.log(item)
       },
-      async removeTo(){
+      async moveTo(){
         let ids = []
         this.resourceList.forEach(item => {
           if(item.isSelect){
@@ -450,7 +455,6 @@
         this.hasSelect = this.resourceList.some(value => {
           return value.isSelect
         })
-        console.log(this.hasSelect)
 
 
         /* isSelect 
@@ -495,9 +499,9 @@
         // console.log(fileList)
       },
       uploadAgain(item){
-        this.itemId = item.id
         this.dialogUpload = true
         this.isUploadAgain = true
+        this.itemId = item.id
       },
       async uploadFile() {
         this.$refs["uploadForm"].validate(async (valid) => {
@@ -531,6 +535,9 @@
               console.log(uploadData.data.msg)
               this.dialogUpload = false
               this.isUploadAgain = false
+              // addResource接口可以接受任意值的id，但该id不会被使用
+              // 虽然如此，但在这里依然重置id为0
+              this.itemId = 0
               this.getList()
             }
           }
@@ -639,12 +646,12 @@
 .name-input {
   width: 350px;
 }
-.remove-box {
+.move-box {
   height: 400px;  
   border: 1px solid lightgray;
   overflow: auto;
 }
-.remove-box .folder-item {
+.move-box .folder-item {
   display: flex;
   height: 40px;
   align-items: center;

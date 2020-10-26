@@ -7,10 +7,11 @@ const constantRoutes = [
   {
     path: "/login", name: "login", component: () => import("./components/login.vue"),
   },
+  { path: "/login/findPwd", component: () => import("./components/welcome/findPwd.vue") },
   { path: "/", redirect: "/welcome" },
   { path: "/welcome", component: () => import('./components/welcome/welcome.vue') },
   { path: "/signup", component: () => import('./components/welcome/signup.vue') },
-  { path: "/home", component: Layout, redirect: "/home/home", children: [
+  { path: "/home", component: Layout, redirect: "/home/resource", children: [
     { path:"/home/home", component:() => import('./components/home/home.vue') },
     { path: "/home/manager", component:() => import('./components/home/manager.vue') },
     { path: "/home/deleter", component:() => import('./components/home/deleter.vue') },
@@ -31,13 +32,13 @@ router.beforeEach((to, from, next) => {
     next();
 
     let isNotHome = false
-        || to.name == "login" 
+        || to.name == "login"
         || to.path === "/welcome"
         || to.path === "/signup"
+        || to.path === "/login/findPwd"
     // token exists？
     if(localStorage.getItem('loginToken')){
         console.log("from where: " + from.name)
-        
         if(isNotHome){
             // console.log("already log in!")
             // console.log("from where: " + from.name)

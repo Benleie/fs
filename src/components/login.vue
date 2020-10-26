@@ -28,7 +28,7 @@
               <i slot="prefix" class="el-input__icon el-icon-lock icon-style"></i>
             </el-input>
           </el-form-item>
-          <div class="forgotPwd">忘记密码?</div>
+          <div class="forgotPwd" @click="findPwd">忘记密码?</div>
           <el-form-item>
             <el-button class="login-btn" @click="Login">登录</el-button>
           </el-form-item>
@@ -128,6 +128,9 @@
       showSignUp(){
         this.$router.push({ path: "/signup" })
       },
+      findPwd(){
+        this.$router.push({ path: "/login/findPwd" })
+      }
       
     },
   }
@@ -276,6 +279,7 @@
 }
 
 .forgotPwd {
+  cursor: pointer;
   height: 22px;
   text-align: right;
   padding-right: 10px;
