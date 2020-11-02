@@ -26,6 +26,7 @@ const createRouter = () => new VueRouter({
   mode: "history"
 })
 const router = createRouter()
+/* 
 router.beforeEach((to, from, next) => {
     console.log(from.fullPath);
     // console.log(to.fullPath);
@@ -56,5 +57,6 @@ router.beforeEach((to, from, next) => {
             })
         }
     }
-});
+}); 
+*/
 export default router

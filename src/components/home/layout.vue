@@ -134,7 +134,7 @@
     },
     created(){
       //fix 701
-      this.fix701()
+      // this.fix701()
     },
     methods: {
       async fix701(){

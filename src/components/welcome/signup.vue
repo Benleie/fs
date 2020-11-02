@@ -180,7 +180,6 @@
           resolve(nodes)
           // console.log(nodes)
         }
-
       },
       closeSignUp(){
         // console.log("close-signup do nothing")
@@ -218,11 +217,6 @@
 }
 .relative-box {
   position: relative;
-}
-.close-button {
-  position: absolute;
-  top: 0;
-  right: 0;
 }
 .close-x {
     /* background-color: orange; */

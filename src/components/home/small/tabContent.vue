@@ -1,5 +1,5 @@
 <template>
-  <div class=''>
+  <div class='tab'>
     <div class="first-box">
       <div class="first-left">
         <el-input
@@ -23,7 +23,7 @@
         </el-button>
         <el-button 
           class="first-build" 
-          @click="dialogVisible = true">新建文件夹</el-button>
+          @click="dialogNewFolder = true">新建文件夹</el-button>
       </div>
     </div>
     <div class="select-box">
@@ -99,11 +99,11 @@
 
     <el-dialog
       title="新建文件夹"
-      :visible.sync="dialogVisible"
+      :visible.sync="dialogNewFolder"
       width="30%">
       <el-input v-model="dialogInput" placeholder="请输入"></el-input>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogNewFolder = false">取 消</el-button>
         <el-button type="primary" @click="newFolder">确 定</el-button>
       </span>
     </el-dialog>
@@ -192,7 +192,7 @@
           this.typeIndex = ["image", "music", "video"].indexOf(newValue)
           this.typeCHName = ["图片", "音乐", "视频"][this.typeIndex]
           this.typeId = this.typeIndex + 1
-          this.getList()
+          // this.getList()
         }
       }
     },
@@ -236,7 +236,7 @@
         folderList: [],
         folderId: 0,
         selectObj: {},
-        dialogVisible: false,
+        dialogNewFolder: false,
         dialogUpload: false,
         dialogMove: false,
         dialogInput: "",
@@ -263,8 +263,8 @@
       }
     },
     created(){
-      this.getList()
-      setInterval(this.getList, 1000)
+      // this.getList()
+      // setInterval(this.getList, 1000)
     },
     updated(){
       // console.log(this.resourceList)
@@ -313,7 +313,7 @@
           this.setFolderList()
         }
       },  
-      async changeSort(id){
+      changeSort(id){
         this.orderColumn = ["createTime", "updateTime", "name"][id]
         this.getList()
         this.sortDefault = this.sortList[id]
@@ -488,7 +488,7 @@
         )
         if(listData.data.code === "200"){
           console.log(listData.data.msg)
-          this.dialogVisible = false
+          this.dialogNewFolder = false
           this.getList()
         }
       },
@@ -671,35 +671,5 @@
 
 </style>
 <style>
-.first-upload {
-  background: #3BB0FE;
-  border-radius: 4px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
-  line-height: 18px;
-}
-.first-move {
-  background: #ffffff;
-  border-radius: 4px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #4A4A4A;
-  line-height: 18px;
-}
-.has-select {
-  background-color: #3BB0FE;
-  color: #ffffff;
-}
-.first-build {
-  border-radius: 4px;
-  border: 1px solid #3BB0FE;
-  font-size: 18px;
-  font-weight: 600;
-  color: #3BB0FE;
-  line-height: 18px;
-}
-.el-dialog__footer {
-  text-align: center;
-}
+
 </style>

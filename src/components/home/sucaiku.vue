@@ -110,6 +110,14 @@
         typeArr: ["image", "video", "music"],
       };
     },
+    watch: {
+      activeName: {
+        handler(newValue){
+          console.log(newValue)
+          // this.getList()
+        }
+      }
+    },
     
     methods: {
       handleClick() {},
