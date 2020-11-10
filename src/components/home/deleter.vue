@@ -2,16 +2,28 @@
   <div class=''>
     <h1>回收站</h1>
     <h2>{{ time }}</h2>
+    <!-- <div>detailList</div> -->
+    <simple-div></simple-div>
   </div>
 </template>
 
 <script>
   //import x from ''
+  let SimpleDiv = {
+    render: (h) => {
+      return h('div', 'hhh')
+    }
+  }
   export default {
-    components: {},
+    components: { SimpleDiv },
     data() {
       return {
-        time: new Date().toLocaleTimeString()
+        time: new Date().toLocaleTimeString(),
+        detailList: {
+          render: (h) => {
+            return h('div', 'hhh')
+          }
+        }
       };
     },
     created(){
@@ -30,7 +42,9 @@
       }, 1000)
       // console.log(this.$el.children)
       // console.log(this.$el.textContent)
-      console.log(this.$el.textContent)
+      // console.log(this.$el.textContent)
+
+      // console.log(this.detailList)
     },
     
     destroyed(){

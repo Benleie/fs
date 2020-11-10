@@ -24,13 +24,13 @@
           <el-input 
             v-model="setPwd.verify"
             auto-complete="new-password" 
-            class="signup-input  verify-input">
+            class="signup-input  signup-verify-input">
           </el-input>
           <el-button 
             type="primary"
             @click="getSms"
             :disabled="notGetSms"
-            class="verify-btn">{{ smsButton }}
+            class="signup-verify-btn">{{ smsButton }}
           </el-button>
         </el-form-item>
         <el-form-item label="密码" class="signup-item" prop="pwd">
