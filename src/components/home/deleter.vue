@@ -4,11 +4,25 @@
     <h2>{{ time }}</h2>
     <!-- <div>detailList</div> -->
     <simple-div></simple-div>
+    <span class="player" @click="clickPlayer">
+      <i class="el-icon-video-play" v-if="playPause === 'Play'"></i>
+      <i class="el-icon-video-pause" v-if="playPause === 'Pause'"></i>
+    </span>
+    <audio id="testAudio" style="border:1px solid red;">
+      <source src="http://zhikun-fs.oss-cn-hangzhou.aliyuncs.com/resource/Bebe Rexha - Ferrari.mp3" type="audio/mpeg">
+    </audio>
+    <el-button @click="clickBind">wxbind</el-button>
+    <el-dialog
+      :visible.sync="dialogWx"
+      width="350px">
+      <div id="wx"></div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   //import x from ''
+  import { WxLogin } from '@/config/wx.js'
   let SimpleDiv = {
     render: (h) => {
       return h('div', 'hhh')
@@ -23,7 +37,9 @@
           render: (h) => {
             return h('div', 'hhh')
           }
-        }
+        },
+        dialogWx: false,
+        playPause: 'Play'
       };
     },
     created(){
@@ -46,6 +62,39 @@
 
       // console.log(this.detailList)
     },
+    methods: {
+      clickBind(){
+        this.dialogWx = true
+        // WxLogin,需要在#wx元素挂载到DOM之后调用
+        this.$nextTick(function(){
+          this.WxBind()
+        })
+      },
+      WxBind() {
+        const config = {
+            id: 'wx', // 需要显示的容器id
+            appid: 'wxdc8e663da8692a31', // 公众号appid wx*******
+            scope: 'snsapi_login', // 网页默认即可
+            redirect_uri: encodeURIComponent('http://fs.zhikuntech.com/setting'), // 授权成功后回调的url
+            state: Math.ceil(Math.random() * 1000), // 可设置为简单的随机数加session用来校验
+            style: 'black', // 提供"black"、"white"可选。二维码的样式
+            href: '' // 外部css文件url，需要https
+          }
+        new WxLogin(config)
+      },
+      clickPlayer(){
+        let audio = document.getElementById('testAudio')
+        if(audio.paused || audio.ended){
+          audio.play()
+          this.playPause = "Pause"
+        }
+        else {
+          audio.pause()
+          this.playPause = 'Play'
+        }
+      }
+    },
+    
     
     destroyed(){
       console.log("destroyed")
@@ -56,12 +105,13 @@
         return  new Date().toLocaleTimeString()
       }
     }, */
-    methods: {
-      
-    },
+    
   }
 </script>
 
 <style scoped>
-
+.player i{
+  font-size: 30px;
+  /* color: red; */
+}
 </style>
