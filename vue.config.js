@@ -1,3 +1,4 @@
+const target = 'http://fs.zhikuntech.com';
 module.exports = {
   chainWebpack: config => {
     config.plugin('html').tap(args => {
@@ -12,13 +13,15 @@ module.exports = {
       "/oauth": {
         // target: 'http://panos.zhikuntech.com', 
         // target: "http://122.51.133.191:8989",
-        target: 'http://192.168.1.4:8080/',
+        // target: 'http://192.168.1.4:8080/',
+        target,
         changeOrigin: true
       },
       "/api": {
         // target: "http://122.51.133.191:8989",
         // target: "http://192.168.1.22:8080",
-        target: 'http://192.168.1.4:8080/',
+        // target: 'http://192.168.1.4:8080/',
+        target,
         changeOrigin: true
       }
     }
