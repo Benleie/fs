@@ -18,7 +18,8 @@ const constantRoutes = [
     { path: "/home/show", component:() => import('./components/home/quanjingku.vue') },
     { path: "/home/resource", component:() => import('./components/home/sucaiku.vue') },
   ]},
-  { path: "/hello", component: () => import('./components/HelloWorld.vue') }
+  { path: "/hello", component: () => import('./components/HelloWorld.vue') },
+  { path: "/counter", component: () => import('./demo/countMoney.vue') }
 ]
 
 const createRouter = () => new VueRouter({

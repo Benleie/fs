@@ -14,6 +14,8 @@
     <el-button @click="clickBind">wxbind</el-button>
     <el-dialog
       :visible.sync="dialogWx"
+      :lock-scroll="true"
+      :close-on-click-modal="true"
       width="350px">
       <div id="wx"></div>
     </el-dialog>
