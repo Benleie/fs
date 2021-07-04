@@ -12,7 +12,7 @@
 
 ## 开发计划
 + [ ] 404页面
-+ [ ] demo：counter父子组件传值
++ [x] demo：counter父子组件传值 learn modifier:sync
 
 ## 待解决问题
 + [ ] signup页面 两个空的el-form-item

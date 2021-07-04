@@ -1,9 +1,11 @@
 <template>
   <div class=''>
     <div class="line">
-      <div>{{ name }}: </div>
-      <div> {{ score }} </div>
-      <el-button type="success" icon="el-icon-plus" @click="add" circle></el-button>
+      <div class="line person-info">
+        <div>{{ name }}: </div>
+        <div> {{ scoreSmall }} </div>
+      </div>
+      <el-button class="my-btn" type="success" icon="el-icon-plus" @click="add" circle></el-button>
       <el-button type="warning" icon="el-icon-minus" @click="minus" circle></el-button>
     </div>
   </div>
@@ -17,21 +19,21 @@
       name: {
         type: String
       },
-      score: {
+      scoreSmall: {
         type: Number
       }
     },
     data() {
       return {
-        mutatedScore: this.score
+        mutatedScore: this.scoreSmall
       };
     },
     methods: {
       add() {
-        this.$emit('update:score', ++this.mutatedScore)
+        this.$emit('update:scoreSmall', this.mutatedScore += 10)
       },
       minus() {
-        this.$emit('update:score', --this.mutatedScore)
+        this.$emit('update:scoreSmall', this.mutatedScore -= 10)
         // this.$emit('update:score', --this.score)
       }
     },
@@ -42,5 +44,12 @@
 //@import url()
 .line {
   display: flex;
+}
+.person-info {
+  width: 5em;
+}
+.my-btn {
+  width:50px;
+  height:50px;
 }
 </style>
