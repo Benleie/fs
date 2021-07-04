@@ -1,27 +1,45 @@
 <template>
   <div class='counter'>
     <h1>counter</h1>
-    <div>
-      <span>总收入：</span>
-      <span>{{ total }}</span>
-    </div>
+      
     <div id="ppp" title1="name">Property && Attribute</div>
+    <main class="todo-main">
+      <section class="card">
+        <header>
+          <span>总收入：</span>
+          <span>{{ total }}</span>
+        </header>
+        <div>
+          <h3>timeLog</h3>
+        </div>
+        
+      </section>
+
+      <section class="card">
+        <el-row>
+          <!-- <el-button type="primary" icon="el-icon-plus" circle @click="addPeople"></el-button> -->
+          <el-input 
+            v-model="inputName"
+            placeholder="添加新成员"
+            class="add-member"
+            @change="addPeople"
+          />
+        </el-row>
+        <counter
+          v-for="person in people"
+          :key="person.name"
+          :name="person.name"
+          :scoreSmall.sync='person.size'
+        />
+      </section>
+    </main>
     
-    <el-row>
-      <el-button type="primary" icon="el-icon-plus" circle @click="addPeople"></el-button>
-      <el-input 
-        v-model="inputName"
-        placeholder="添加新成员"
-        class="add-member"
-        @change="addPeople"
-      />
-    </el-row>
-    <counter
-      v-for="person in people"
-      :key="person.name"
-      :name="person.name"
-      :scoreSmall.sync='person.size'
-    />
+
+    
+    
+    
+    
+    
   </div>
   
 </template>
@@ -78,9 +96,32 @@
 //@import url()
 .counter {
   font-size: 20px;
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .add-member {
-  margin-left: 10em;
+  // margin-left: 10em;
   width: 20em;
+}
+
+.todo-main {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 3em;
+}
+.todo-main > :last-child {
+  margin-left: 1em;
+}
+.card {
+  // margin-top: 3em;
+  padding: 1em;
+  // width: 50%;
+  border:1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  // box-shadow: 0 2px 0 rgb(225 225 225 / 20%);
 }
 </style>
