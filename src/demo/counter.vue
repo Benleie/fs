@@ -31,10 +31,14 @@
     methods: {
       add() {
         this.$emit('update:scoreSmall', this.mutatedScore += 10)
+        const str = `${this.name} added to ${this.mutatedScore}`
+        this.$emit('log', str)
       },
       minus() {
         this.$emit('update:scoreSmall', this.mutatedScore -= 10)
         // this.$emit('update:score', --this.score)
+        const str = `${this.name} minus to ${this.mutatedScore} `
+        this.$emit('log', str)
       }
     },
   }

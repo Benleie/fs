@@ -11,6 +11,14 @@
         </header>
         <div>
           <h3>timeLog</h3>
+          <div 
+            v-for="log in logStack" 
+            :key="log.time"
+            class="log-detail"
+          >
+            <span>{{log.time.slice(16,24)}}</span>
+            <span>{{log.str}}</span>
+          </div>
         </div>
         
       </section>
@@ -30,15 +38,10 @@
           :key="person.name"
           :name="person.name"
           :scoreSmall.sync='person.size'
+          @log='log'
         />
       </section>
     </main>
-    
-
-    
-    
-    
-    
     
   </div>
   
@@ -58,6 +61,7 @@
           { name: 'Lebron', size: 50 },
           { name: 'JR', size: 20 },
         ],
+        logStack: [],
         inputName: ''
       };
     },
@@ -65,6 +69,9 @@
     beforeMount(){
       // console.log(document)
       // console.log(document.getElementById('ppp'))
+      this.logStack = JSON.parse(localStorage.getItem('count-log')) || []
+      console.log(localStorage.getItem('count-log'))
+      console.log(this.logStack)
     },
     mounted(){
       let divP = document.getElementById('ppp')
@@ -87,6 +94,15 @@
           size: Math.floor(Math.random()*5) * 10 + 10
         })
         this.inputName = ''
+      },
+      log(str) {
+        this.logStack.unshift({
+          str,
+          time: Date()
+        })
+        // console.log(JSON.stringify(this.logStack))
+        localStorage.setItem('count-log', JSON.stringify(this.logStack))
+        console.log(JSON.parse(JSON.stringify(this.logStack)))
       }
     },
   }
@@ -107,6 +123,12 @@
   width: 20em;
 }
 
+.log-detail {
+  & > :first-child {
+    color: lightgrey;
+    margin-right: 10px;
+  }
+}
 .todo-main {
   display: flex;
   justify-content: space-between;
