@@ -1,26 +1,29 @@
 <template>
   <div class=''>
-      <section>
-        <el-input
-          v-model="inputValue"
-          placeholder="做爱做的事"
-          @change="addTodo"
-       />
-       <Item
-            :todo="todo"
-            v-for="todo in filteredTodos"
-            :key="todo.id"
-            @del="deleteTodo"
-        />
+    <header class="main-header">
+      <h1>Htodo</h1>
+    </header>
+    <section class="todo-app">
+      <el-input
+        v-model="inputValue"
+        placeholder="做爱做的事"
+        @change="addTodo"
+      />
+      <Item
+          :todo="todo"
+          v-for="todo in filteredTodos"
+          :key="todo.id"
+          @del="deleteTodo"
+      />
 
-        <Tabs 
-            :filter="filter" 
-            :todos="todos"
-            @toggleTabs="toggleFilter"
-            @clearAll="clearAllCompleted"
-        />
+      <Tabs 
+          :filter="filter" 
+          :todos="todos"
+          @toggleTabs="toggleFilter"
+          @clearAll="clearAllCompleted"
+      />
 
-      </section>
+    </section>
   </div>
 </template>
 
@@ -75,5 +78,10 @@
 
 <style lang='scss' scoped>
 //@import url()
+
+.todo-app {
+  width: 600px;
+  margin: 0 auto;
+}
 
 </style>
