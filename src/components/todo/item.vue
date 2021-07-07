@@ -29,5 +29,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-    
+.todo-item
+  position relative
+  background yellow
 </style>
