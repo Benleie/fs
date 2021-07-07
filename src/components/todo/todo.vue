@@ -1,95 +1,71 @@
 <template>
   <div class=''>
-     <section class="todoapp">
-      <header class="header">
-        <h1>todos</h1>
-        <input
-          class="new-todo"
-          autofocus
-          autocomplete="off"
-          placeholder="What needs to be done?"
-          v-model="newTodo"
-          @keyup.enter="addTodo"
-        />
-      </header>
-      <section class="main" v-show="todos.length" v-cloak>
-        <input
-          id="toggle-all"
-          class="toggle-all"
-          type="checkbox"
-          v-model="allDone"
-        />
-        <label for="toggle-all"></label>
-        <ul class="todo-list">
-          <li
+      <section>
+        <el-input
+          placeholder="做爱做的事"
+          @change="addTodo"
+       />
+       <Item
+            :todo="todo"
             v-for="todo in filteredTodos"
-            class="todo"
             :key="todo.id"
-            :class="{ completed: todo.completed, editing: todo == editedTodo }"
-          >
-            <div class="view">
-              <input class="toggle" type="checkbox" v-model="todo.completed" />
-              <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
-              <button class="destroy" @click="removeTodo(todo)"></button>
-            </div>
-            <input
-              class="edit"
-              type="text"
-              v-model="todo.title"
-              v-todo-focus="todo == editedTodo"
-              @blur="doneEdit(todo)"
-              @keyup.enter="doneEdit(todo)"
-              @keyup.esc="cancelEdit(todo)"
-            />
-          </li>
-        </ul>
+            @del="deleteTodo"
+        />
+
+        <Tabs 
+            :filter="filter" 
+            :todos="todos"
+            @toggleTabs="toggleFilter"
+            @clearAll="clearAllCompleted"
+        />
+
       </section>
-      <footer class="footer" v-show="todos.length" v-cloak>
-        <span class="todo-count">
-          <strong>{{ remaining }}</strong> {{ remaining | pluralize }} left
-        </span>
-        <ul class="filters">
-          <li>
-            <a href="#/all" :class="{ selected: visibility == 'all' }">All</a>
-          </li>
-          <li>
-            <a href="#/active" :class="{ selected: visibility == 'active' }"
-              >Active</a
-            >
-          </li>
-          <li>
-            <a
-              href="#/completed"
-              :class="{ selected: visibility == 'completed' }"
-              >Completed</a
-            >
-          </li>
-        </ul>
-        <button
-          class="clear-completed"
-          @click="removeCompleted"
-          v-show="todos.length > remaining"
-        >
-          Clear completed
-        </button>
-      </footer>
-    </section>
-    <footer class="info">
-      <p>Double-click to edit a todo</p>
-      <p>Written by <a href="http://evanyou.me">Evan You</a></p>
-      <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-    </footer>
   </div>
 </template>
 
 <script>
   //import x from ''
+  import Item from "./item.vue"
+  import Tabs from "./tabs.vue"
+
+  let id = 0
   export default {
-    components: {},
-    data() {
-      return {};
+    components: {
+      Item, 
+      Tabs
     },
-    methods: {},
+    data() {
+      return {
+        todos: []
+      };
+    },
+    computed: {
+      filteredTodos() {
+        if (this.filter === 'all')  return this.todos
+        const completed = this.filter === 'completed'
+        return this.todos.filter(todo => completed === todo.completed)
+      }
+    },
+    methods: {
+      addTodo(e) {
+            console.log(e.target.value);
+            this.todos.unshift({
+                id: id++,
+                content: e.target.value.trim(),
+                completed: false
+            })
+            e.target.value = '';
+        },
+        deleteTodo(id){
+            this.todos.splice(this.todos.findIndex(todo => todo.id === id) ,1)
+        },
+        toggleFilter(state) {
+            this.filter = state
+        },
+        clearAllCompleted(){
+            this.todos = this.todos.filter(todo => !todo.completed)
+        }
+    },
   }
 </script>
 

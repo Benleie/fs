@@ -19,6 +19,7 @@ const constantRoutes = [
     { path: "/home/resource", component:() => import('./components/home/sucaiku.vue') },
   ]},
   { path: "/hello", component: () => import('./components/HelloWorld.vue') },
+  { path: "/todo", component: () => import('./components/todo/todo.vue') },
   { path: "/counter", component: () => import('./demo/countMoney.vue') }
 ]
 
