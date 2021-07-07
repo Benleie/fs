@@ -41,7 +41,7 @@
     data() {
       return {
         inputValue: '',
-        todos: [],
+        todos: JSON.parse(localStorage.getItem('todolist')) || [],
         filter: "all"
       };
     },
@@ -55,13 +55,16 @@
     methods: {
       addTodo() {
             // console.log(e.target.value);
+            const lastTodo = this.todos[this.todos.length - 1]
             this.todos.unshift({
-                id: id++,
+                id: lastTodo ? lastTodo.id++ : 0,
                 content: this.inputValue.trim(),
                 completed: false
             })
             this.inputValue = '';
+            localStorage.setItem('todolist', JSON.stringify(this.todos))
             console.log(this.todos)
+            console.log(id)
         },
         deleteTodo(id){
             this.todos.splice(this.todos.findIndex(todo => todo.id === id) ,1)
