@@ -2,6 +2,7 @@
   <div class=''>
       <section>
         <el-input
+          v-model="inputValue"
           placeholder="做爱做的事"
           @change="addTodo"
        />
@@ -36,7 +37,9 @@
     },
     data() {
       return {
-        todos: []
+        inputValue: '',
+        todos: [],
+        filter: "all"
       };
     },
     computed: {
@@ -47,14 +50,15 @@
       }
     },
     methods: {
-      addTodo(e) {
-            console.log(e.target.value);
+      addTodo() {
+            // console.log(e.target.value);
             this.todos.unshift({
                 id: id++,
-                content: e.target.value.trim(),
+                content: this.inputValue.trim(),
                 completed: false
             })
-            e.target.value = '';
+            this.inputValue = '';
+            console.log(this.todos)
         },
         deleteTodo(id){
             this.todos.splice(this.todos.findIndex(todo => todo.id === id) ,1)
